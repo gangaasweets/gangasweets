@@ -55,100 +55,156 @@ const OrderConfirmationPage = () => {
     exit: { opacity: 0, y: -20, transition: { duration: 0.4 } }
   };
 
-  return (
-    <motion.div
-      className="max-w-4xl mx-auto p-6 bg-white"
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={pageVariants}
-    >
-      <h1 className="text-4xl font-bold text-center text-emerald-700 mb-8">
-        Thank You for Your Order!
-      </h1>
-
-      <div className="p-4 sm:p-6 rounded-lg border border-gray-200 shadow-lg">
-        {/* Order Header */}
-        <div className="flex flex-col sm:flex-row justify-between mb-8">
-          <div className="mb-4 sm:mb-0">
-            <h2 className="text-lg sm:text-xl font-semibold break-all">
-              Order ID: {checkout._id}
-            </h2>
-            <p className="text-gray-500">
-              Order Date:{" "}
-              {new Date(checkout.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-emerald-700 text-sm font-medium">
-              Estimated Delivery:{" "}
-              {calculateEstimatedDelivery(checkout.createdAt)}
-            </p>
-          </div>
-        </div>
-
-        {/* Ordered Items */}
-        <div className="mb-10">
-          {checkout.checkoutItems.map((item) => (
-            <div
-              key={item.productId}
-              className="flex items-center mb-4 border-b pb-4"
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md mr-4"
-              />
-
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm sm:text-md font-semibold truncate">{item.name}</h4>
-                <p className="text-xs sm:text-sm text-gray-500">
-                  {item.color} | {item.size}
-                </p>
-              </div>
-
-              <div className="ml-4 text-right">
-                <p className="text-sm sm:text-md font-semibold">
-                  ${item.price}
-                </p>
-                <p className="text-xs sm:text-sm text-gray-500">
-                  Qty: {item.quantity}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Payment & Delivery Info */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          {/* Payment */}
-          <div>
-            <h4 className="text-lg font-semibold mb-2">
-              Payment
-            </h4>
-            <p className="text-gray-600 text-sm sm:text-base">
-              {checkout.paymentMethod || "PayPal"}
-            </p>
-          </div>
-
-          {/* Delivery */}
-          <div>
-            <h4 className="text-lg font-semibold mb-2">
-              Delivery
-            </h4>
-            <div className="text-gray-600 text-sm sm:text-base">
-                <p>{checkout.shippingAddress?.address}</p>
-                <p>
-                {checkout.shippingAddress?.city},{" "}
-                {checkout.shippingAddress?.country}
+    return (
+        <motion.div
+            className="max-w-4xl mx-auto p-4 sm:p-6 bg-gray-50 min-h-[80vh]"
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={pageVariants}
+        >
+            <div className="flex flex-col items-center justify-center text-center mb-12 mt-8">
+                <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                    <svg className="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
+                    Order Placed Successfully!
+                </h1>
+                <p className="text-lg text-gray-600">
+                    Thank you for your purchase. We've received your order and are processing it.
                 </p>
             </div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
+
+            <div className="space-y-6">
+                {/* Order Summary Card */}
+                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-4 gap-4">
+                        <div>
+                            <p className="text-sm text-gray-500 uppercase tracking-wide font-medium">Order ID</p>
+                            <h2 className="text-lg font-bold text-gray-900 break-all">
+                                #{checkout._id}
+                            </h2>
+                        </div>
+                        <div className="sm:text-right">
+                             <p className="text-sm text-gray-500 uppercase tracking-wide font-medium">Order Date</p>
+                            <p className="text-gray-900 font-semibold">
+                                {new Date(checkout.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-emerald-50 p-4 rounded-xl flex items-center justify-between">
+                         <div>
+                            <p className="text-emerald-800 text-sm font-semibold">Estimated Delivery</p>
+                            <p className="text-emerald-700 text-sm uppercase tracking-wide">
+                                {calculateEstimatedDelivery(checkout.createdAt)}
+                            </p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-emerald-800 text-sm font-semibold">Order Total</p>
+                            <p className="text-xl font-bold text-emerald-900">${checkout.totalPrice}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Ordered Items Card */}
+                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 className="text-lg font-bold text-gray-900 mb-6">Items Ordered</h3>
+                    <div className="space-y-4">
+                        {checkout.checkoutItems.map((item) => (
+                            <div
+                                key={item.productId}
+                                className="flex items-center gap-4 border-b last:border-b-0 pb-4 last:pb-0"
+                            >
+                                <div className="relative group">
+                                    <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        className="w-20 h-20 object-cover rounded-xl border border-gray-100"
+                                    />
+                                    <span className="absolute -top-2 -right-2 bg-black text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                                        {item.quantity}
+                                    </span>
+                                </div>
+
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="text-md font-bold text-gray-900 truncate">{item.name}</h4>
+                                    <p className="text-sm text-gray-500 font-medium">
+                                        Variant: <span className="text-gray-900">{item.color} / {item.size}</span>
+                                    </p>
+                                </div>
+
+                                <div className="text-right">
+                                    <p className="text-md font-bold text-gray-900">
+                                        ${(item.price * item.quantity).toFixed(2)}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                        ${item.price} each
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Payment & Delivery Card */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {/* Payment */}
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                        <h4 className="text-sm text-gray-500 uppercase tracking-wide font-bold mb-3">
+                            Payment Details
+                        </h4>
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-gray-100 rounded-lg">
+                                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                            </div>
+                            <div>
+                                <p className="text-gray-900 font-bold">
+                                    {checkout.paymentMethod || "Razorpay / Online"}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">Transaction processed securely</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Delivery */}
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                        <h4 className="text-sm text-gray-500 uppercase tracking-wide font-bold mb-3">
+                            Delivery Address
+                        </h4>
+                        <div className="flex items-start gap-3">
+                             <div className="p-2 bg-gray-100 rounded-lg">
+                                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                            <div className="text-gray-900">
+                                <p className="font-bold">{checkout.shippingAddress?.address}</p>
+                                <p className="text-sm text-gray-600">
+                                    {checkout.shippingAddress?.city}, {checkout.shippingAddress?.country}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
+                    <button
+                        onClick={() => navigate("/my-orders")}
+                        className="px-8 py-4 bg-black text-white rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg text-center"
+                    >
+                        View My Orders
+                    </button>
+                    <button
+                        onClick={() => navigate("/")}
+                        className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-xl font-bold hover:bg-gray-50 transition-all text-center"
+                    >
+                        Continue Shopping
+                    </button>
+                </div>
+            </div>
+        </motion.div>
+    );
 };
 
 export default OrderConfirmationPage;

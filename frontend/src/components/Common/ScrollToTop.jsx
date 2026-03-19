@@ -5,7 +5,16 @@ const ScrollToTop = () => {
     const { pathname } = useLocation();
 
     useEffect(() => {
-        window.scrollTo(0, 0);
+        const scroll = () => {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: "smooth"
+            });
+        };
+        
+        const animationId = requestAnimationFrame(scroll);
+        return () => cancelAnimationFrame(animationId);
     }, [pathname]);
 
     return null;
