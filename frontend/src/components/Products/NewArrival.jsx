@@ -96,17 +96,19 @@ const NewArrival = () => {
         >
           Discover the latest styles straight off the runway, freshly added to keep your wardrobe on the cutting edge of fashion.
         </motion.p>
-        {/* Scroll Buttons */}
-        <div className="absolute right-0 -bottom-7.5 flex space-x-2">
+        
+        {/* Scroll Buttons - Repositioned for mobile */}
+        <div className="absolute right-0 bottom-[-30px] sm:bottom-[-20px] flex space-x-2">
           <button
             onClick={() => scroll("left")}
             disabled={!canScrollLeft}
-            className={`p-2 rounded-3xl border border-gray-300 ${canScrollLeft ? "bg-white text-black hover:cursor-pointer" : "bg-gray-200 text-gray-400"}`}>
+            className={`p-2 rounded-full border border-gray-300 transition-colors ${canScrollLeft ? "bg-white text-black hover:bg-gray-100 cursor-pointer" : "bg-gray-100 text-gray-300 cursor-not-allowed"}`}>
             <FiChevronLeft className="text-2xl" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className={`p-2 rounded-3xl border border-gray-300 ${canScrollRight ? "bg-white text-black hover:cursor-pointer" : "bg-gray-200 text-gray-400"}`}>
+            disabled={!canScrollRight}
+            className={`p-2 rounded-full border border-gray-300 transition-colors ${canScrollRight ? "bg-white text-black hover:bg-gray-100 cursor-pointer" : "bg-gray-100 text-gray-300 cursor-not-allowed"}`}>
             <FiChevronRight className="text-2xl" />
           </button>
         </div>

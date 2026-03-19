@@ -29,12 +29,14 @@ import Features from './pages/Features';
 import VerifyOtp from './pages/VerifyOtp';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import ScrollToTop from './components/Common/ScrollToTop';
 
 const App = () => {
   return (
     <Provider store={store}>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Toaster richColors position="top-right" />
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<UserLayout />}>
             <Route index element={<Home />} />

@@ -67,11 +67,11 @@ const OrderConfirmationPage = () => {
         Thank You for Your Order!
       </h1>
 
-      <div className="p-6 rounded-lg border border-gray-200 shadow-lg">
+      <div className="p-4 sm:p-6 rounded-lg border border-gray-200 shadow-lg">
         {/* Order Header */}
-        <div className="flex justify-between mb-10">
-          <div>
-            <h2 className="text-xl font-semibold">
+        <div className="flex flex-col sm:flex-row justify-between mb-8">
+          <div className="mb-4 sm:mb-0">
+            <h2 className="text-lg sm:text-xl font-semibold break-all">
               Order ID: {checkout._id}
             </h2>
             <p className="text-gray-500">
@@ -81,7 +81,7 @@ const OrderConfirmationPage = () => {
           </div>
 
           <div>
-            <p className="text-emerald-700 text-sm">
+            <p className="text-emerald-700 text-sm font-medium">
               Estimated Delivery:{" "}
               {calculateEstimatedDelivery(checkout.createdAt)}
             </p>
@@ -98,21 +98,21 @@ const OrderConfirmationPage = () => {
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-16 h-16 object-cover rounded-md mr-4"
+                className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md mr-4"
               />
 
-              <div>
-                <h4 className="text-md font-semibold">{item.name}</h4>
-                <p className="text-sm text-gray-500">
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm sm:text-md font-semibold truncate">{item.name}</h4>
+                <p className="text-xs sm:text-sm text-gray-500">
                   {item.color} | {item.size}
                 </p>
               </div>
 
-              <div className="ml-auto text-right">
-                <p className="text-md font-semibold">
+              <div className="ml-4 text-right">
+                <p className="text-sm sm:text-md font-semibold">
                   ${item.price}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500">
                   Qty: {item.quantity}
                 </p>
               </div>
@@ -121,13 +121,13 @@ const OrderConfirmationPage = () => {
         </div>
 
         {/* Payment & Delivery Info */}
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           {/* Payment */}
           <div>
             <h4 className="text-lg font-semibold mb-2">
               Payment
             </h4>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm sm:text-base">
               {checkout.paymentMethod || "PayPal"}
             </p>
           </div>
@@ -137,13 +137,13 @@ const OrderConfirmationPage = () => {
             <h4 className="text-lg font-semibold mb-2">
               Delivery
             </h4>
-            <p className="text-gray-600">
-              {checkout.shippingAddress?.address}
-            </p>
-            <p className="text-gray-600">
-              {checkout.shippingAddress?.city},{" "}
-              {checkout.shippingAddress?.country}
-            </p>
+            <div className="text-gray-600 text-sm sm:text-base">
+                <p>{checkout.shippingAddress?.address}</p>
+                <p>
+                {checkout.shippingAddress?.city},{" "}
+                {checkout.shippingAddress?.country}
+                </p>
+            </div>
           </div>
         </div>
       </div>
