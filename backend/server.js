@@ -17,7 +17,7 @@ const contactRoutes = require("./routes/contactRoutes");
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:3000", // temporary for local frontend
+  origin: "http://localhost:5173",
   credentials: true
 }));
 
