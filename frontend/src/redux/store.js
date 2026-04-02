@@ -8,6 +8,8 @@ import adminReducer from "./slices/adminSlice";
 import adminProductReducer from "./slices/adminProductSlice"
 import adminOrderReducer from "./slices/adminOrderSlice"
 import siteSettingsReducer from "./slices/siteSettingsSlice"
+import blogReducer from "./slices/blogSlice"
+import adminBlogReducer from "./slices/adminBlogSlice"
 
 const store = configureStore({
   reducer: {
@@ -20,6 +22,8 @@ const store = configureStore({
     adminProducts: adminProductReducer,
     adminOrders: adminOrderReducer,
     siteSettings: siteSettingsReducer,
+    blogs: blogReducer,
+    adminBlogs: adminBlogReducer,
   },
 });
 

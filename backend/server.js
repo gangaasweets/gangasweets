@@ -14,6 +14,8 @@ const productAdminRoutes = require("./routes/productAdminRoutes");
 const adminOrderRoutes = require("./routes/adminOrderRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const siteSettingsRoutes = require("./routes/siteSettingsRoutes");
+const blogRoutes = require("./routes/blogRoutes");
+const adminBlogRoutes = require("./routes/adminBlogRoutes");
 
 const app = express();
 app.use(express.json());
@@ -49,6 +51,8 @@ app.use("/api/admin/users", adminRoutes);
 app.use("/api/admin/products", productAdminRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/admin/site-settings", siteSettingsRoutes);
+app.use("/api/admin/blogs", adminBlogRoutes);
+app.use("/api/blogs", blogRoutes); // Using /api/blogs for public access as well
 
 
 app.listen(PORT, () => {

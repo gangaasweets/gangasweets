@@ -17,6 +17,8 @@ import UserManagement from './components/Admin/UserManagement';
 import ProductManagement from './components/Admin/ProductManagement';
 import EditProductPage from './components/Admin/EditProductPage';
 import OrderManagement from './components/Admin/OrderManagement';
+import BlogManagement from './components/Admin/BlogManagement';
+import EditBlogPage from './components/Admin/EditBlogPage';
 
 import { Provider } from "react-redux";
 import store from "./redux/store";
@@ -29,6 +31,8 @@ import Features from './pages/Features';
 import VerifyOtp from './pages/VerifyOtp';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import BlogListingPage from './pages/BlogListingPage';
+import SingleBlogPage from './pages/SingleBlogPage';
 import ScrollToTop from './components/Common/ScrollToTop';
 
 const App = () => {
@@ -52,6 +56,8 @@ const App = () => {
             <Route path="contact" element={<Contact />} />
             <Route path="about" element={<About />} />
             <Route path="faqs" element={<Faqs />} />
+            <Route path="blog" element={<BlogListingPage />} />
+            <Route path="blog/:slug" element={<SingleBlogPage />} />
             <Route path="features" element={<Features />} />
             <Route path="verify-otp" element={<VerifyOtp />} />
             <Route path="forgot-password" element={<ForgotPassword />} />
@@ -69,7 +75,11 @@ const App = () => {
             <Route path="products/new" element={<EditProductPage />} />
             <Route path="products/:id/edit" element={<EditProductPage />} />
             <Route path="orders" element={<OrderManagement />} />
+            <Route path="blogs" element={<BlogManagement />} />
+            <Route path="blogs/new" element={<EditBlogPage />} />
+            <Route path="blogs/:id/edit" element={<EditBlogPage />} />
           </Route>
+
         </Routes>
       </BrowserRouter>
     </Provider>
