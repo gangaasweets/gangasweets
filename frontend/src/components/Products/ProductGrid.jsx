@@ -9,6 +9,16 @@ const ProductGrid = ({ products, loading, error }) => {
     if (error) {
         return <p>Error: {error}</p>
     }
+
+    // Helper to optimize Cloudinary URLs
+    const optimizeCloudinaryUrl = (url) => {
+        if (!url || !url.includes("cloudinary.com")) return url;
+        if (url.includes("/upload/")) {
+            return url.replace("/upload/", "/upload/f_auto,q_auto/");
+        }
+        return url;
+    };
+
     return (
         <motion.div
             className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 m-4 sm:m-8 gap-4 sm:gap-6"
@@ -35,8 +45,9 @@ const ProductGrid = ({ products, loading, error }) => {
                         <div className="bg-white p-2 sm:p-4 rounded-lg transform transition-transform duration-300 group-hover:scale-103 group-hover:shadow-md h-full">
                             <div className="w-full h-48 sm:h-96 mb-2 sm:mb-4 overflow-hidden rounded-lg">
                                 <img
-                                    src={product.images?.[0]?.url}
-                                    alt={product.images?.[0]?.altText || product.name}
+                                    src={optimizeCloudinaryUrl(product.images?.[0]?.url)}
+                                    alt={product.images?.[0]?.altText || product.name || "Rabbit E-commerce Product"}
+                                    loading="lazy"
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
                             </div>

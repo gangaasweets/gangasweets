@@ -29,6 +29,15 @@ const NewArrival = () => {
     fetchNewArrivals()
   }, [])
 
+  // Helper to optimize Cloudinary URLs
+  const optimizeCloudinaryUrl = (url) => {
+    if (!url || !url.includes("cloudinary.com")) return url;
+    if (url.includes("/upload/")) {
+      return url.replace("/upload/", "/upload/f_auto,q_auto/");
+    }
+    return url;
+  };
+
   const handleMouseDown = (e) => {
     setIsDragging(true);
     setStartX(e.pageX - scrollRef.current.offsetLeft);
@@ -132,8 +141,9 @@ const NewArrival = () => {
             transition={{ duration: 0.5 }}
           >
             <img
-              src={product.images[0]?.url}
-              alt={product.images[0]?.altText || product.name}
+              src={optimizeCloudinaryUrl(product.images[0]?.url)}
+              alt={product.images[0]?.altText || product.name || "New Arrival Apparel"}
+              loading="lazy"
               className="w-full h-[250px] sm:h-125 object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
               draggable="false"
             />

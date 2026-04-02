@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import MetaHTML from '../components/Common/MetaHTML';
+import SchemaMarkup from '../components/Common/SchemaMarkup';
 
 const FAQItem = ({ question, answer, isOpen, toggleOpen }) => {
     return (
@@ -70,6 +72,17 @@ const Faqs = () => {
         }
     ];
 
+    const faqSchema = {
+        mainEntity: faqs.map(faq => ({
+            "@type": "Question",
+            name: faq.question,
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer
+            }
+        }))
+    };
+
     const pageVariants = {
         initial: { opacity: 0, y: 20 },
         animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
@@ -89,6 +102,11 @@ const Faqs = () => {
             exit="exit"
             variants={pageVariants}
         >
+            <MetaHTML 
+                title="FAQs - Frequently Asked Questions"
+                description="Get quick answers to common questions about orders, shipping, returns, and more at Rabbit E-commerce."
+            />
+            <SchemaMarkup type="FAQPage" data={faqSchema} />
             <div className="container mx-auto px-4 lg:px-8 max-w-4xl">
 
                 {/* HEADER */}

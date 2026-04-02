@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Disallow sensitive pages
+Disallow: /checkout
+Disallow: /order-confirmation
+Disallow: /my-orders
+Disallow: /admin
+Disallow: /profile
+
+# Sitemap location
+Sitemap: https://rabbit-ecommerce.vercel.app/sitemap.xml

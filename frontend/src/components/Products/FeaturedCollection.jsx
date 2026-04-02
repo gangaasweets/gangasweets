@@ -37,7 +37,8 @@ const FeaturedCollection = () => {
                 >
                     <img
                         src={featured}
-                        alt="Featured Collection"
+                        alt="Rabbit E-commerce Featured Collection"
+                        loading="lazy"
                         className="w-full h-full object-cover lg:rounded-tr-3xl lg:rounded-br-3xl hover:scale-105 transition-transform duration-700"
                     />
                 </motion.div>

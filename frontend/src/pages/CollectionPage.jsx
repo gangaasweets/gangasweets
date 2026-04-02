@@ -7,6 +7,8 @@ import ProductGrid from "../components/Products/ProductGrid";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductsByFilters } from "../redux/slices/productsSlice";
+import MetaHTML from "../components/Common/MetaHTML";
+import Breadcrumbs from "../components/Common/Breadcrumbs";
 
 const CollectionPage = () => {
     const { collection } = useParams();
@@ -17,6 +19,9 @@ const CollectionPage = () => {
 
     const sidebarRef = useRef(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
+    const collectionTitle = collection === "all" ? "All Collections" : `${capitalize(collection)} Collection`;
 
     useEffect(() => {
         dispatch(fetchProductsByFilters({ collection, ...queryParams }))
@@ -98,12 +103,19 @@ const CollectionPage = () => {
 
 
             <div className="flex flex-col lg:flex-row relative z-10">
-                {/* Products Grid */}
-                <div className="grow p-4">
-                    <h2 className="text-2xl uppercase mb-4">All Collection</h2>
-                    <SortOptions />
-                    <ProductGrid products={products} loading={loading} error={error} />
-                </div>
+        <motion.div
+            className="grow p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+        >
+            <MetaHTML 
+                title={collectionTitle}
+                description={`Browse our premium ${collectionTitle.toLowerCase()}. Shop the latest trends in fashion at Rabbit E-commerce with secure payments and fast delivery.`}
+            />
+            <h1 className="text-2xl uppercase mb-4">{collectionTitle}</h1>
+            <SortOptions />
+            <ProductGrid products={products} loading={loading} error={error} />
+        </motion.div>
             </div>
 
         </motion.div>

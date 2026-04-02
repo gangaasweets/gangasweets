@@ -4,6 +4,7 @@ import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { contactSupport } from '../redux/slices/authSlice';
+import MetaHTML from '../components/Common/MetaHTML';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -52,6 +53,10 @@ const Contact = () => {
             exit="exit"
             variants={pageVariants}
         >
+            <MetaHTML 
+                title="Contact Us - Customer Support & Inquiries"
+                description="Get in touch with Rabbit E-commerce. Reach out for any questions, support, or feedback. We're here to help you with your fashion needs."
+            />
             <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
 
                 {/* HEADER */}

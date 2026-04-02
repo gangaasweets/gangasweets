@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductDetails, fetchSimilarProducts } from "../../redux/slices/productsSlice";
 import { addToCart } from "../../redux/slices/cartSlice";
 import { ProductDetailsSkeleton } from "../Common/Skeleton";
+import MetaHTML from "../Common/MetaHTML";
+import SchemaMarkup from "../Common/SchemaMarkup";
+import Breadcrumbs from "../Common/Breadcrumbs";
 
 
 const ProductDetails = ({ productId }) => {
@@ -72,6 +75,32 @@ const ProductDetails = ({ productId }) => {
             })
     };
 
+    // Helper to optimize Cloudinary URLs
+    const optimizeCloudinaryUrl = (url) => {
+        if (!url || !url.includes("cloudinary.com")) return url;
+        if (url.includes("/upload/")) {
+            return url.replace("/upload/", "/upload/f_auto,q_auto/");
+        }
+        return url;
+    };
+
+    const productSchema = selectedProduct ? {
+        name: selectedProduct.name,
+        image: selectedProduct.images?.map(img => img.url),
+        description: selectedProduct.description,
+        brand: {
+            "@type": "Brand",
+            name: selectedProduct.brand || "Rabbit"
+        },
+        offers: {
+            "@type": "Offer",
+            url: window.location.href,
+            priceCurrency: "USD",
+            price: selectedProduct.price,
+            availability: selectedProduct.countInStock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        }
+    } : null;
+
     if (loading) {
         return <ProductDetailsSkeleton />
     }
@@ -88,151 +117,163 @@ const ProductDetails = ({ productId }) => {
             transition={{ duration: 0.6 }}
         >
             {selectedProduct && (
-                <div className="max-w-6xl mx-auto bg-white p-4 sm:p-6 rounded-lg">
-                    <div className="flex flex-col md:flex-row gap-6">
-                        {/* Left Thumbnails */}
-                        <div className="hidden md:flex flex-col space-y-3 mr-4">
-                            {selectedProduct.images.map((image, index) => (
-                                <img
-                                    key={index}
-                                    src={image.url}
-                                    alt={image.altText || `Thumbnail ${index}`}
-                                    className={`w-20 h-20 object-cover rounded-lg cursor-pointer border ${mainImage === image.url ? "border-black" : "border-[#E5E5E5]"}`}
-                                    onClick={() => setMainImage(image.url)}
-                                />
-                            ))}
-                        </div>
-                        {/* Main Image */}
-                        <div className="md:w-1/2">
-                            <div className="mb-4">
-                                <img
-                                    src={mainImage}
-                                    alt={selectedProduct.name}
-                                    className="w-full h-auto object-cover rounded-lg shadow-sm"
-                                />
+                <>
+                    <MetaHTML 
+                        title={selectedProduct.name}
+                        description={selectedProduct.description?.substring(0, 160)}
+                        ogImage={selectedProduct.images?.[0]?.url}
+                        ogType="product"
+                    />
+                    <SchemaMarkup type="Product" data={productSchema} />
+                    <div className="max-w-6xl mx-auto bg-white p-4 sm:p-6 rounded-lg">
+                        <div className="flex flex-col md:flex-row gap-6">
+                            {/* Left Thumbnails */}
+                            <div className="hidden md:flex flex-col space-y-3 mr-4">
+                                {selectedProduct.images.map((image, index) => (
+                                    <img
+                                        key={index}
+                                        src={optimizeCloudinaryUrl(image.url)}
+                                        alt={image.altText || `${selectedProduct.name} Thumbnail ${index}`}
+                                        loading="lazy"
+                                        className={`w-20 h-20 object-cover rounded-lg cursor-pointer border ${mainImage === image.url ? "border-black" : "border-[#E5E5E5]"}`}
+                                        onClick={() => setMainImage(image.url)}
+                                    />
+                                ))}
                             </div>
-                        </div>
-                        {/* Mobile Thumbnail */}
-                        <div className="md:hidden flex overflow-x-auto space-x-3 mb-6">
-                            {selectedProduct.images.map((image, index) => (
-                                <img
-                                    key={index}
-                                    src={image.url}
-                                    alt={image.altText || `Thumbnail ${index}`}
-                                    className={`w-20 h-20 object-cover rounded-lg cursor-pointer border ${mainImage === image.url ? "border-black" : "border-[#E5E5E5]"}`}
-                                    onClick={() => setMainImage(image.url)}
-                                />
-                            ))}
-                        </div>
+                            {/* Main Image */}
+                            <div className="md:w-1/2">
+                                <div className="mb-4">
+                                    <img
+                                        src={optimizeCloudinaryUrl(mainImage)}
+                                        alt={selectedProduct.name}
+                                        loading="eager"
+                                        className="w-full h-auto object-cover rounded-lg shadow-sm"
+                                    />
+                                </div>
+                            </div>
+                            {/* Mobile Thumbnail */}
+                            <div className="md:hidden flex overflow-x-auto space-x-3 mb-6">
+                                {selectedProduct.images.map((image, index) => (
+                                    <img
+                                        key={index}
+                                        src={optimizeCloudinaryUrl(image.url)}
+                                        alt={image.altText || `${selectedProduct.name} Mobile Thumbnail ${index}`}
+                                        loading="lazy"
+                                        className={`w-20 h-20 object-cover rounded-lg cursor-pointer border ${mainImage === image.url ? "border-black" : "border-[#E5E5E5]"}`}
+                                        onClick={() => setMainImage(image.url)}
+                                    />
+                                ))}
+                            </div>
 
-                        {/* Right Side */}
-                        <div className="md:w-1/2 md:ml-6 flex flex-col space-y-6">
-                            <div>
-                                <h1 className="text-[28px] font-medium text-gray-900 mb-2 uppercase tracking-tight">
-                                    {selectedProduct.name}
-                                </h1>
+                            {/* Right Side */}
+                            <div className="md:w-1/2 md:ml-6 flex flex-col space-y-6">
+                                <div>
+                                    <h1 className="text-[28px] font-medium text-gray-900 mb-2 uppercase tracking-tight">
+                                        {selectedProduct.name}
+                                    </h1>
 
-                                <div className="flex items-center space-x-2 text-[18px]">
-                                    {selectedProduct.originalPrice && (
-                                        <span className="text-gray-500 line-through font-normal">
-                                            ${selectedProduct.originalPrice}
+                                    <div className="flex items-center space-x-2 text-[18px]">
+                                        {selectedProduct.originalPrice && (
+                                            <span className="text-gray-500 line-through font-normal">
+                                                ${selectedProduct.originalPrice}
+                                            </span>
+                                        )}
+                                        <span className="text-gray-900 font-medium">
+                                            ${selectedProduct.price}
                                         </span>
-                                    )}
-                                    <span className="text-gray-900 font-medium">
-                                        ${selectedProduct.price}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <p className="text-[14px] text-gray-600 leading-relaxed">
-                                {selectedProduct.description}
-                            </p>
-
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-[13px] font-medium text-gray-900">Color:</p>
-                                    <div className="flex gap-2 mt-2">
-                                        {selectedProduct.colors?.map((color) => (
-                                            <button
-                                                key={color}
-                                                onClick={() => setSelectedColor(color)}
-                                                className={`w-8 h-8 rounded-full border cursor-pointer ${selectedColor === color ? "border-2 border-black" : "border-[#E5E5E5]"}`}
-                                                style={{
-                                                    backgroundColor: color.toLocaleLowerCase(),
-                                                    filter: "brightness(0.9)"
-                                                }}></button>
-                                        ))}
                                     </div>
                                 </div>
 
-                                <div>
-                                    <p className="text-[13px] font-medium text-gray-900">Size:</p>
-                                    <div className="flex gap-2 mt-2">
-                                        {selectedProduct.sizes?.map((size) => (
-                                            <button
-                                                key={size}
-                                                onClick={() => setSelectedSize(size)}
-                                                className={`px-4 py-2 border border-[#E5E5E5] rounded text-[13px] cursor-pointer ${selectedSize === size ? "bg-black text-white" : "hover:bg-gray-50"}`}
-                                            >
-                                                {size}
+                                <p className="text-[14px] text-gray-600 leading-relaxed">
+                                    {selectedProduct.description}
+                                </p>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <p className="text-[13px] font-medium text-gray-900">Color:</p>
+                                        <div className="flex gap-2 mt-2">
+                                            {selectedProduct.colors?.map((color) => (
+                                                <button
+                                                    key={color}
+                                                    onClick={() => setSelectedColor(color)}
+                                                    className={`w-8 h-8 rounded-full border cursor-pointer ${selectedColor === color ? "border-2 border-black" : "border-[#E5E5E5]"}`}
+                                                    style={{
+                                                        backgroundColor: color.toLocaleLowerCase(),
+                                                        filter: "brightness(0.9)"
+                                                    }}></button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[13px] font-medium text-gray-900">Size:</p>
+                                        <div className="flex gap-2 mt-2">
+                                            {selectedProduct.sizes?.map((size) => (
+                                                <button
+                                                    key={size}
+                                                    onClick={() => setSelectedSize(size)}
+                                                    className={`px-4 py-2 border border-[#E5E5E5] rounded text-[13px] cursor-pointer ${selectedSize === size ? "bg-black text-white" : "hover:bg-gray-50"}`}
+                                                >
+                                                    {size}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[13px] font-medium text-gray-900">Quantity:</p>
+                                        <div className="flex items-center space-x-4 mt-2">
+                                            <button onClick={() => handleQuantityChange("minus")} className="px-3 py-1 bg-gray-100 rounded text-[13px] hover:cursor-pointer transition">
+                                                -
                                             </button>
-                                        ))}
+                                            <span className="text-[13px] font-medium">{quantity}</span>
+                                            <button onClick={() => handleQuantityChange("plus")} className="px-3 py-1 bg-gray-100 rounded text-[13px] hover:cursor-pointer transition">
+                                                +
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <p className="text-[13px] font-medium text-gray-900">Quantity:</p>
-                                    <div className="flex items-center space-x-4 mt-2">
-                                        <button onClick={() => handleQuantityChange("minus")} className="px-3 py-1 bg-gray-100 rounded text-[13px] hover:cursor-pointer transition">
-                                            -
-                                        </button>
-                                        <span className="text-[13px] font-medium">{quantity}</span>
-                                        <button onClick={() => handleQuantityChange("plus")} className="px-3 py-1 bg-gray-100 rounded text-[13px] hover:cursor-pointer transition">
-                                            +
-                                        </button>
-                                    </div>
+                                <div className="pt-2">
+                                    <button
+                                        onClick={handleAddToCart}
+                                        disabled={isButtonDisabled}
+                                        className={`bg-[#000] text-white py-3 px-5 rounded w-full text-[13px] font-medium transition-all ${isButtonDisabled ? "cursor-not-allowed opacity-50" : "hover:opacity-85 cursor-pointer"}`}>
+                                        {isButtonDisabled ? "ADDING TO CART..." : "ADD TO CART"}
+                                    </button>
                                 </div>
-                            </div>
 
-                            <div className="pt-2">
-                                <button
-                                    onClick={handleAddToCart}
-                                    disabled={isButtonDisabled}
-                                    className={`bg-[#000] text-white py-3 px-5 rounded w-full text-[13px] font-medium transition-all ${isButtonDisabled ? "cursor-not-allowed opacity-50" : "hover:opacity-85 cursor-pointer"}`}>
-                                    {isButtonDisabled ? "ADDING TO CART..." : "ADD TO CART"}
-                                </button>
-                            </div>
-
-                            <div className="pt-6 border-t border-[#E5E5E5] flex flex-col space-y-4">
-                                <h3 className="text-[13px] font-medium text-gray-900">Characteristics:</h3>
-                                <div className="space-y-2">
-                                    {selectedProduct.brand && (
-                                        <p className="text-[13px] text-gray-600">
-                                            <span className="font-medium text-gray-900">Brand:</span> {selectedProduct.brand}
-                                        </p>
-                                    )}
-                                    {selectedProduct.material && (
-                                        <p className="text-[13px] text-gray-600">
-                                            <span className="font-medium text-gray-900">Material:</span> {selectedProduct.material}
-                                        </p>
-                                    )}
+                                <div className="pt-6 border-t border-[#E5E5E5] flex flex-col space-y-4">
+                                    <h3 className="text-[13px] font-medium text-gray-900">Characteristics:</h3>
+                                    <div className="space-y-2">
+                                        {selectedProduct.brand && (
+                                            <p className="text-[13px] text-gray-600">
+                                                <span className="font-medium text-gray-900">Brand:</span> {selectedProduct.brand}
+                                            </p>
+                                        )}
+                                        {selectedProduct.material && (
+                                            <p className="text-[13px] text-gray-600">
+                                                <span className="font-medium text-gray-900">Material:</span> {selectedProduct.material}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <motion.div
+                            className="mt-20"
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.1 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <h2 className="text-[18px] text-center font-medium mb-4">
+                                You May Also Like
+                            </h2>
+                            <ProductGrid products={similarProducts} loading={loading} error={error} />
+                        </motion.div>
                     </div>
-                    <motion.div
-                        className="mt-20"
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.1 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <h2 className="text-[18px] text-center font-medium mb-4">
-                            You May Also Like
-                        </h2>
-                        <ProductGrid products={similarProducts} loading={loading} error={error} />
-                    </motion.div>
-                </div>
+                </>
             )}
         </motion.div>
     );

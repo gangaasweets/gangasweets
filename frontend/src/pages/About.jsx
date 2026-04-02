@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchSiteSettings } from '../redux/slices/siteSettingsSlice';
 import { FiEdit2 } from 'react-icons/fi';
 import ImageEditModal from '../components/Admin/ImageEditModal';
+import MetaHTML from '../components/Common/MetaHTML';
 
 const fadeUp = {
     hidden: { opacity: 0, y: 30 },
@@ -38,6 +39,15 @@ const About = () => {
     const storyImage = settings?.aboutUsStoryImage?.url || "https://picsum.photos/600/700?random=1";
     const brandImage = settings?.aboutUsBrandImage?.url || "https://picsum.photos/600/700?random=3";
 
+    // Helper to optimize Cloudinary URLs
+    const optimizeCloudinaryUrl = (url) => {
+        if (!url || !url.includes("cloudinary.com")) return url;
+        if (url.includes("/upload/")) {
+            return url.replace("/upload/", "/upload/f_auto,q_auto/");
+        }
+        return url;
+    };
+
     if (loading && !settings) {
         return (
             <div className="max-w-[1100px] mx-auto px-6 py-16 space-y-16">
@@ -57,13 +67,18 @@ const About = () => {
             animate="visible"
             variants={stagger}
         >
+            <MetaHTML 
+                title="About Us - Our Story & Vision"
+                description="Learn more about Rabbit E-commerce. Discover our mission to provide high-quality, modern fashion and our journey in creating vacation-ready outfits."
+            />
             {/* HERO */}
             <section className="py-16 px-6">
                 <div className="max-w-[1100px] mx-auto">
                     <motion.div variants={fadeUp} className="relative group">
                         <img
-                            src={heroImage}
-                            alt="About Hero"
+                            src={optimizeCloudinaryUrl(heroImage)}
+                            alt="Rabbit E-commerce About Us"
+                            loading="eager"
                             className="w-full h-[300px] md:h-[400px] object-cover rounded-sm"
                         />
                         {user?.role === "admin" && (
