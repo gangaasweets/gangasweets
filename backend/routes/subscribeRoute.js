@@ -29,10 +29,10 @@ router.post("/subscribe", async (req, res) => {
     try {
       sendEmail({
         to: email,
-        subject: "Welcome to Rabbit E-commerce Newsletter!",
+        subject: "Welcome to Ganga Sweets Newsletter!",
         text: "Thank you for subscribing to our newsletter! You will now receive updates on our latest products and offers.",
         html: `<h1>Welcome!</h1>
-               <p>Thank you for subscribing to the <strong>Rabbit E-commerce</strong> newsletter.</p>
+               <p>Thank you for subscribing to the <strong>Ganga Sweets</strong> newsletter.</p>
                <p>You will now be the first to know about our latest collections and exclusive offers!</p>`,
       });
     } catch (err) {

@@ -4,3 +4,6 @@ server.js cors
 https://rabbit-clothings.vercel.app/ client url backend .env
 
 https://ecommerce-clothing-kre3.onrender.com vite backend url frontend .env
+
+
+ map, category selection

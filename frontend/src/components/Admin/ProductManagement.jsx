@@ -52,7 +52,8 @@ const ProductManagement = () => {
           <thead className="bg-gray-100 text-[12px] uppercase text-gray-900 tracking-tight">
             <tr>
               <th className="py-3 px-4">Name</th>
-              <th className="py-3 px-4">Price</th>
+              <th className="py-3 px-4">Category</th>
+              <th className="py-3 px-4">Base Price</th>
               <th className="py-3 px-4">SKU</th>
               <th className="py-3 px-4">Actions</th>
             </tr>
@@ -80,7 +81,8 @@ const ProductManagement = () => {
                 <td className="p-4 font-medium text-gray-900 whitespace-nowrap text-[14px]">
                   {product.name}
                 </td>
-                <td className="p-4 text-[14px] text-gray-600">${product.price}</td>
+                <td className="p-4 text-[14px] text-gray-600 capitalize">{product.category}</td>
+                <td className="p-4 text-[14px] text-gray-600">₹{product.basePrice}</td>
                 <td className="p-4 text-[14px] text-gray-600">{product.sku}</td>
                 <td className="p-4">
                   <Link
@@ -98,7 +100,7 @@ const ProductManagement = () => {
               </motion.tr>
             ))
             ) : (<tr>
-              <td colSpan={4} className="p-4 text-center text-gray-500">
+              <td colSpan={5} className="p-4 text-center text-gray-500">
                 No Products found.
               </td>
             </tr>)}
@@ -115,8 +117,12 @@ const ProductManagement = () => {
                   <span className="text-[14px] font-medium text-gray-900">{product.name}</span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-[12px] font-medium text-gray-500 uppercase tracking-tight">Price</span>
-                  <span className="text-[14px] text-gray-600">${product.price}</span>
+                  <span className="text-[12px] font-medium text-gray-500 uppercase tracking-tight">Category</span>
+                  <span className="text-[14px] text-gray-600 capitalize">{product.category}</span>
+                </div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[12px] font-medium text-gray-500 uppercase tracking-tight">Base Price</span>
+                  <span className="text-[14px] text-gray-600">₹{product.basePrice}</span>
                 </div>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-[12px] font-medium text-gray-500 uppercase tracking-tight">SKU</span>

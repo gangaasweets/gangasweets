@@ -1,0 +1,22 @@
+<div class="flex items-center justify-center gap-4 my-4">
+  <div class="h-[1px] w-24 bg-gradient-to-l from-[#b08d57] to-transparent"></div>
+  
+  <div class="text-[#b08d57] text-xs">
+    <span class="rotate-45 block">◆</span>
+  </div>
+  
+  <div class="h-[1px] w-24 bg-gradient-to-r from-[#b08d57] to-transparent"></div>
+</div>
+
+
+
+
+<div class="relative flex py-5 items-center w-64 mx-auto">
+    <div class="flex-grow border-t border-[#b08d57]"></div>
+    <span class="flex-shrink mx-4 text-[#b08d57]">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6l2-6z"/>
+        </svg>
+    </span>
+    <div class="flex-grow border-t border-[#b08d57]"></div>
+</div>

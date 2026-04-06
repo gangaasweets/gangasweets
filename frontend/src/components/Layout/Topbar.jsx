@@ -2,7 +2,7 @@ import { TbBrandFiverr } from 'react-icons/tb'
 import { IoLogoInstagram } from 'react-icons/io'
 import { FaLinkedin } from 'react-icons/fa'
 const Topbar = () => {
-    return (<div className="bg-[#ea2e0e] text-white">
+    return (<div className="bg-[#8FAF95] text-white">
         <div className="container mx-auto flex justify-between items-center py-3 px-4">
             <div className="hidden md:flex items-center space-x-4">
                 <a href="https://www.fiverr.com/s/Eg7Q8B0" className="hover:text-gray-300">

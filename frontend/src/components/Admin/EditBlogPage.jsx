@@ -156,7 +156,7 @@ const EditBlogPage = () => {
                 name="title"
                 value={blogData.title}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-[#ea2e0e] outline-none"
+                className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
                 placeholder="Enter blog title"
                 required
               />
@@ -168,7 +168,7 @@ const EditBlogPage = () => {
                 name="excerpt"
                 value={blogData.excerpt}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-[#ea2e0e] outline-none h-24 resize-none"
+                className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all h-24 resize-none"
                 placeholder="Brief summary for blog listing"
                 required
                 maxLength={300}
@@ -205,14 +205,14 @@ const EditBlogPage = () => {
                     onChange={handleChange}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ea2e0e]"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div>
                 </label>
               </div>
 
               <button
                 type="submit"
                 disabled={loading || uploadingImage}
-                className="w-full bg-[#ea2e0e] text-white py-3 rounded-md hover:bg-red-700 transition font-medium text-[13px] uppercase tracking-wide disabled:bg-gray-400"
+                className="w-full bg-[#D4AF37] text-white py-3 rounded-full hover:bg-[#B8962E] transition font-bold text-xs uppercase tracking-widest disabled:bg-gray-400 shadow-lg shadow-[#D4AF37]/20"
               >
                 {loading ? "Saving..." : id ? "Update Blog" : "Publish Blog"}
               </button>
@@ -280,7 +280,7 @@ const EditBlogPage = () => {
                     name="metaDescription"
                     value={blogData.metaDescription}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 rounded p-2 text-xs focus:ring-1 focus:ring-[#ea2e0e] outline-none h-20 resize-none"
+                    className="w-full border border-gray-300 rounded p-2 text-xs focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all h-20 resize-none"
                     placeholder="Leave blank to use excerpt"
                   />
                 </div>

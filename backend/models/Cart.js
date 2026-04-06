@@ -10,8 +10,8 @@ const cartItemSchema = new mongoose.Schema(
     name: String,
     image: String,
     price: String,
-    size: String,
-    color: String,
+    selectedWeight: String,
+    productType: { type: String, default: "standard" },
     quantity: {
       type: Number,
       default: 1,

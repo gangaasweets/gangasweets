@@ -101,12 +101,12 @@ const VerifyOtp = () => {
                                 if (error) dispatch(clearError());
                             }}
                             placeholder="000000"
-                            className="w-full text-center text-[32px] tracking-[0.5em] font-light py-4 border-b border-gray-200 outline-none focus:border-[#ea2e0e] transition-colors placeholder:text-gray-100"
+                            className="w-full text-center text-[40px] tracking-[0.5em] font-light py-6 border-b-2 border-gray-100 outline-none focus:border-[#D4AF37] transition-all placeholder:text-gray-100"
                             required
                         />
-                        <div className="mt-4 p-3 bg-gray-50 rounded-sm border border-gray-100">
-                            <p className="text-[12px] text-gray-500 leading-relaxed text-center">
-                                <span className="font-medium text-[#ea2e0e]">Note:</span> Please check your <span className="font-medium text-gray-900">Spam / Junk</span> folder if you don't see the email in your inbox.
+                        <div className="mt-6 p-4 bg-[#FFF8E7] rounded-xl border border-[#D4AF37]/20 uppercase tracking-widest text-[10px]">
+                            <p className="text-gray-500 leading-relaxed text-center">
+                                <span className="font-bold text-[#D4AF37]">Note:</span> Please check your <span className="font-bold text-gray-900">Spam / Junk</span> folder if you don't see the email in your inbox.
                             </p>
                         </div>
                     </div>
@@ -114,33 +114,33 @@ const VerifyOtp = () => {
                     <button
                         type="submit"
                         disabled={loading || otp.length !== 6}
-                        className="w-full bg-black text-white py-4 rounded-sm text-[13px] font-medium tracking-wide uppercase hover:bg-gray-900 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        className="w-full bg-[#D4AF37] text-white py-4 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#B8962E] transition-all shadow-lg shadow-[#D4AF37]/20 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
                         {loading ? "Verifying..." : "Verify & Continue"}
                     </button>
                 </form>
 
-                <div className="mt-10 text-center">
-                    <p className="text-[14px] text-gray-500 mb-2">
+                <div className="mt-12 text-center">
+                    <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-3">
                         {canResend ? "Didn't receive the code?" : `Resend code in ${formatTime(timer)}`}
                     </p>
                     <button
                         onClick={handleResend}
                         disabled={!canResend || loading}
-                        className={`text-[13px] font-medium uppercase tracking-wider transition-colors ${
+                        className={`text-[13px] font-bold uppercase tracking-[0.2em] transition-all ${
                             canResend 
-                                ? "text-[#ea2e0e] hover:text-[#c0260b] cursor-pointer" 
-                                : "text-gray-300 cursor-not-allowed"
+                                ? "text-[#D4AF37] hover:text-[#B8962E] cursor-pointer" 
+                                : "text-gray-200 cursor-not-allowed"
                         }`}
                     >
                         Resend OTP
                     </button>
                 </div>
 
-                <div className="mt-12 pt-8 border-t border-gray-100 text-center">
+                <div className="mt-16 pt-8 border-t border-gray-100 text-center">
                     <button 
                         onClick={() => navigate("/register")}
-                        className="text-[12px] text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-tight"
+                        className="text-[11px] font-bold text-gray-300 hover:text-gray-900 transition-colors uppercase tracking-[0.2em]"
                     >
                         Back to registration
                     </button>

@@ -18,7 +18,7 @@ const AdminSidebar = () => {
     <div className="p-6">
         <div className="mb-6">
             <Link to="/admin" className="text-[24px] font-medium tracking-tight">
-                Rabbit
+                GANGA SWEETS
             </Link>
         </div>
         <h2 className="text-[18px] font-medium mb-6 text-center">Admin Dashboard</h2>
@@ -42,6 +42,13 @@ const AdminSidebar = () => {
             className={({isActive}) => isActive ? "bg-gray-700 text-white py-3 px-4 rounded-md flex items-center space-x-2 text-[13px] font-medium" : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded-md flex items-center space-x-2 text-[13px] font-medium"}>
             <FaClipboardList />
             <span>Orders</span>
+            </NavLink>
+
+            <NavLink 
+            to="/admin/categories" 
+            className={({isActive}) => isActive ? "bg-gray-700 text-white py-3 px-4 rounded-md flex items-center space-x-2 text-[13px] font-medium" : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded-md flex items-center space-x-2 text-[13px] font-medium"}>
+            <FaStore />
+            <span>Categories</span>
             </NavLink>
 
             <NavLink 

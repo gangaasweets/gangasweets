@@ -86,6 +86,9 @@ const adminOrderSlice = createSlice({
 
         // Calculate total sales
         const totalSales = action.payload.reduce((acc, order) => {
+          if (order.paymentMethod === "COD" && order.status !== "Delivered") {
+            return acc; 
+          }
           return acc + order.totalPrice;
         }, 0);
         state.totalSales = totalSales;

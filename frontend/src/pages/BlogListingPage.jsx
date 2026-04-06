@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { fetchBlogs } from "../redux/slices/blogSlice";
 import { motion } from "framer-motion";
 import MetaHTML from "../components/Common/MetaHTML";
+import { BlogGridSkeleton } from "../components/Common/Skeleton";
 
 const BlogListingPage = () => {
   const dispatch = useDispatch();
@@ -35,25 +36,20 @@ const BlogListingPage = () => {
       exit="exit"
       variants={pageVariants}
     >
-      <MetaHTML
-        title="Blog - Latest Fashion Trends & Styling Tips | Rabbit E-commerce"
-        description="Read the latest articles on fashion, styling, and new arrivals on the Rabbit E-commerce blog."
+      <MetaHTML 
+        title="Blog - Indian Mithai Traditions & Gifting Tips | Ganga Sweets"
+        description="Read the latest articles on Indian sweets, traditional recipes, and gifting tips from the Ganga Sweets team."
       />
-      
-      <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
-        <div className="text-center mb-16">
-          <h1 className="text-[28px] font-medium mb-3 text-[#ea2e0e]">
-            Our Blog
-          </h1>
-          <p className="text-[14px] text-gray-600 max-w-xl mx-auto leading-relaxed">
-            Discover the latest trends, styling tips, and news from Rabbit E-commerce.
+      <div className="container mx-auto px-4 py-12">
+        <header className="mb-12 text-center">
+          <h1 className="premium-separator mb-4">The Sweet Stories</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Discover the heritage of Indian sweets, traditional festive recipes, and the art of premium gifting.
           </p>
-        </div>
+        </header>
 
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#ea2e0e]"></div>
-          </div>
+          <BlogGridSkeleton count={6} />
         ) : error ? (
           <div className="text-center py-20 text-red-500">Error: {error}</div>
         ) : blogs.length === 0 ? (
@@ -84,7 +80,7 @@ const BlogListingPage = () => {
                       year: "numeric",
                     })}
                   </span>
-                  <h2 className="text-xl font-medium mb-3 text-gray-900 group-hover:text-[#ea2e0e] transition-colors line-clamp-2">
+                  <h2 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#D4AF37] transition-colors line-clamp-2 font-['Cinzel'] tracking-wide">
                     {blog.title}
                   </h2>
                   <p className="text-gray-600 text-[14px] mb-6 line-clamp-3 leading-relaxed flex-grow">
@@ -92,7 +88,7 @@ const BlogListingPage = () => {
                   </p>
                   <Link
                     to={`/blog/${blog.slug}`}
-                    className="text-[13px] font-medium text-black border-b border-black pb-1 w-max hover:text-[#ea2e0e] hover:border-[#ea2e0e] transition-colors uppercase tracking-wide"
+                    className="text-[13px] font-bold text-black border-b border-black pb-1 w-max hover:text-[#D4AF37] hover:border-[#D4AF37] transition-colors uppercase tracking-[0.2em]"
                   >
                     Read More
                   </Link>

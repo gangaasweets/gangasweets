@@ -112,3 +112,113 @@ export const OrderDetailsSkeleton = () => (
         </div>
     </div>
 );
+
+export const HorizontalProductSkeleton = ({ count = 4 }) => (
+    <div className="flex space-x-6 overflow-hidden py-4">
+        {Array.from({ length: count }).map((_, i) => (
+            <div key={i} className="min-w-[150px] sm:min-w-[320px] lg:min-w-[350px] shrink-0 bg-white p-4 rounded-lg">
+                <div className="relative w-full h-[250px] sm:h-125 bg-gray-200 rounded-lg overflow-hidden">
+                    <Shimmer />
+                </div>
+                <div className="mt-4 space-y-2">
+                    <div className="h-4 bg-gray-200 w-3/4 rounded overflow-hidden relative">
+                        <Shimmer />
+                    </div>
+                    <div className="h-4 bg-gray-200 w-1/4 rounded overflow-hidden relative">
+                        <Shimmer />
+                    </div>
+                </div>
+            </div>
+        ))}
+    </div>
+);
+
+export const SidebarFilterSkeleton = () => (
+    <div className="p-6 space-y-8 animate-pulse text-left">
+        <div>
+            <div className="h-6 bg-gray-200 w-1/2 mb-6 rounded"></div>
+            <div className="space-y-4">
+                {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex items-center space-x-3">
+                        <div className="w-4 h-4 bg-gray-200 rounded-full"></div>
+                        <div className="h-4 bg-gray-200 w-2/3 rounded"></div>
+                    </div>
+                ))}
+            </div>
+        </div>
+        <div className="pt-6 border-t border-gray-100">
+            <div className="h-4 bg-gray-200 w-1/2 mb-4 rounded"></div>
+            <div className="h-2 bg-gray-200 w-full rounded"></div>
+        </div>
+    </div>
+);
+
+export const BlogGridSkeleton = ({ count = 3 }) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {Array.from({ length: count }).map((_, i) => (
+            <div key={i} className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden flex flex-col animate-pulse">
+                <div className="relative w-full h-56 bg-gray-200 overflow-hidden">
+                    <Shimmer />
+                </div>
+                <div className="p-6 flex flex-col flex-grow space-y-4">
+                    <div className="h-2 bg-gray-200 w-1/4 rounded overflow-hidden relative">
+                        <Shimmer />
+                    </div>
+                    <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 w-full rounded overflow-hidden relative">
+                            <Shimmer />
+                        </div>
+                        <div className="h-4 bg-gray-200 w-3/4 rounded overflow-hidden relative">
+                            <Shimmer />
+                        </div>
+                    </div>
+                    <div className="space-y-2 flex-grow">
+                        <div className="h-3 bg-gray-100 w-full rounded"></div>
+                        <div className="h-3 bg-gray-100 w-full rounded"></div>
+                        <div className="h-3 bg-gray-100 w-2/3 rounded"></div>
+                    </div>
+                    <div className="h-4 bg-gray-200 w-1/4 rounded overflow-hidden relative mt-4">
+                        <Shimmer />
+                    </div>
+                </div>
+            </div>
+        ))}
+    </div>
+);
+
+export const SingleBlogSkeleton = () => (
+    <div className="container mx-auto px-4 lg:px-8 max-w-4xl animate-pulse">
+        <div className="h-4 bg-gray-200 w-32 mb-10 rounded overflow-hidden relative">
+            <Shimmer />
+        </div>
+        
+        <header className="mb-10 text-center border-b border-gray-100 pb-10 space-y-6">
+            <div className="h-3 bg-gray-200 w-24 mx-auto rounded overflow-hidden relative">
+                <Shimmer />
+            </div>
+            <div className="space-y-3">
+                <div className="h-10 bg-gray-200 w-3/4 mx-auto rounded overflow-hidden relative">
+                    <Shimmer />
+                </div>
+                <div className="h-10 bg-gray-200 w-2/3 mx-auto rounded overflow-hidden relative">
+                    <Shimmer />
+                </div>
+            </div>
+            <div className="h-3 bg-gray-200 w-20 mx-auto rounded overflow-hidden relative">
+                <Shimmer />
+            </div>
+        </header>
+
+        <div className="mb-16 rounded-3xl bg-gray-100 h-[400px] md:h-[600px] w-full overflow-hidden relative">
+            <Shimmer />
+        </div>
+
+        <div className="space-y-6">
+            <div className="h-4 bg-gray-100 w-full rounded"></div>
+            <div className="h-4 bg-gray-100 w-full rounded"></div>
+            <div className="h-4 bg-gray-100 w-3/4 rounded"></div>
+            <div className="h-4 bg-gray-100 w-full rounded"></div>
+            <div className="h-4 bg-gray-100 w-5/6 rounded"></div>
+        </div>
+    </div>
+);

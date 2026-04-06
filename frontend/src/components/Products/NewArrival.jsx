@@ -3,6 +3,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { HorizontalProductSkeleton } from "../Common/Skeleton";
 
 const NewArrival = () => {
   const scrollRef = useRef(null);
@@ -13,9 +14,11 @@ const NewArrival = () => {
   const [canScrollRight, setCanScrollRight] = useState(true);
 
   const [newArrivals, setNewArrivals] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchNewArrivals = async () => {
+      setLoading(true)
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/products/new-arrivals`
@@ -23,6 +26,8 @@ const NewArrival = () => {
         setNewArrivals(response.data)
       } catch (error) {
         console.error(error)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -88,24 +93,24 @@ const NewArrival = () => {
     <section className="py-16 px-4 lg:px-0 mx-4 md:mx-12">
       <div className="container mx-auto text-center mb-10 relative">
         <motion.h2
-          className="text-[18px] font-medium mb-3"
+          className="premium-separator"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.8 }}
           transition={{ duration: 0.5 }}
         >
-          Explore New Arrivals
+          Fresh from the Kitchen
         </motion.h2>
         <motion.p
-          className="text-[14px] text-gray-600 mb-6 leading-relaxed"
+          className="text-[14px] text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.8 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          Discover the latest styles straight off the runway, freshly added to keep your wardrobe on the cutting edge of fashion.
+          Indulge in our latest creations, prepared fresh every day with the finest ingredients and royal recipes.
         </motion.p>
-        
+
         {/* Scroll Buttons - Repositioned for mobile */}
         <div className="absolute right-0 bottom-[-30px] sm:bottom-[-20px] flex space-x-2">
           <button
@@ -131,30 +136,34 @@ const NewArrival = () => {
         onMouseUp={handleMouseUpOrLeave}
         onMouseLeave={handleMouseUpOrLeave}
       >
-        {newArrivals.map((product) => (
-          <motion.div
-            key={product._id}
-            className="min-w-[150px] sm:min-w-[320px] lg:min-w-[350px] shrink-0 relative group"
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.5 }}
-          >
-            <img
-              src={optimizeCloudinaryUrl(product.images[0]?.url)}
-              alt={product.images[0]?.altText || product.name || "New Arrival Apparel"}
-              loading="lazy"
-              className="w-full h-[250px] sm:h-125 object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
-              draggable="false"
-            />
-            <div className="absolute bottom-0 left-0 right-0 backdrop-blur-md text-white p-2 sm:p-4 rounded-b-lg">
-              <Link to={`/product/${product._id}`} className="block">
-                <h4 className="font-medium text-[14px]">{product.name}</h4>
-                <p className="mt-1 text-[13px] text-white/80">${product.price}</p>
-              </Link>
-            </div>
-          </motion.div>
-        ))}
+        {loading ? (
+          <HorizontalProductSkeleton count={4} />
+        ) : (
+          newArrivals.map((product) => (
+            <motion.div
+              key={product._id}
+              className="min-w-[150px] sm:min-w-[320px] lg:min-w-[350px] shrink-0 relative group"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5 }}
+            >
+              <img
+                src={optimizeCloudinaryUrl(product.images[0]?.url)}
+                alt={product.images[0]?.altText || product.name || "New Arrival Apparel"}
+                loading="lazy"
+                className="w-full h-[250px] sm:h-125 object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
+                draggable="false"
+              />
+              <div className="absolute bottom-0 left-0 right-0 backdrop-blur-md text-white p-2 sm:p-4 rounded-b-lg">
+                <Link to={`/product/${product._id}`} className="block">
+                  <h4 className="font-semibold text-[14px]">{product.name}</h4>
+                  <p className="mt-1 text-[13px] text-white/90">₹{product.basePrice || product.price}</p>
+                </Link>
+              </div>
+            </motion.div>
+          ))
+        )}
       </div>
     </section>
   )

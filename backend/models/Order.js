@@ -19,8 +19,7 @@ const orderItemSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    size: String,
-    color: String,
+    selectedWeight: String,
     quantity: {
       type: Number,
       required: true,
@@ -43,6 +42,8 @@ const orderSchema = new mongoose.Schema(
       postalCode: { type: String, required: true },
       country: { type: String, required: true },
     },
+    deliveryDate: Date,
+    deliveryTimeSlot: String,
     paymentMethod: {
       type: String,
       required: true,

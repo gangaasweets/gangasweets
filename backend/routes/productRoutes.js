@@ -23,6 +23,7 @@ router.post("/", protect, admin, upload.array("images", 5), async (req, res) => 
       discountPrice,
       countInStock,
       category,
+      subCategory,
       brand,
       sizes,
       colors,
@@ -31,6 +32,11 @@ router.post("/", protect, admin, upload.array("images", 5), async (req, res) => 
       gender,
       isFeatured,
       isPublished,
+      isBestSeller,
+      isPremium,
+      isSugarFree,
+      festivalTags,
+      productType,
       tags,
       dimensions,
       weight,
@@ -56,19 +62,25 @@ router.post("/", protect, admin, upload.array("images", 5), async (req, res) => 
     const product = new Product({
       name,
       description,
-      price,
+      basePrice: price,
       discountPrice,
       countInStock,
       category,
+      subCategory,
       brand,
-      sizes: Array.isArray(sizes) ? sizes : sizes.split(","),
-      colors: Array.isArray(colors) ? colors : colors.split(","),
+      sizes: Array.isArray(sizes) ? sizes : sizes?.split(","),
+      colors: Array.isArray(colors) ? colors : colors?.split(","),
       collections,
       material,
       gender,
       images,
       isFeatured,
       isPublished,
+      isBestSeller,
+      isPremium,
+      isSugarFree,
+      festivalTags: Array.isArray(festivalTags) ? festivalTags : festivalTags?.split(","),
+      productType,
       tags,
       dimensions,
       weight,
@@ -96,6 +108,7 @@ router.put("/:id", protect, admin, upload.array("images", 5), async (req, res) =
       discountPrice,
       countInStock,
       category,
+      subCategory,
       brand,
       sizes,
       colors,
@@ -105,6 +118,11 @@ router.put("/:id", protect, admin, upload.array("images", 5), async (req, res) =
       images, // Existing images passed back as JSON
       isFeatured,
       isPublished,
+      isBestSeller,
+      isPremium,
+      isSugarFree,
+      festivalTags,
+      productType,
       tags,
       dimensions,
       weight,
@@ -118,10 +136,11 @@ router.put("/:id", protect, admin, upload.array("images", 5), async (req, res) =
       let updatedImages = [];
 
       // Parse existing images if they come as a string (happens with FormData)
-      if (typeof images === "string") {
-        updatedImages = JSON.parse(images);
-      } else if (Array.isArray(images)) {
-        updatedImages = images;
+      const existingImages = req.body.existingImages;
+      if (typeof existingImages === "string") {
+        updatedImages = JSON.parse(existingImages);
+      } else if (Array.isArray(existingImages)) {
+        updatedImages = existingImages;
       }
 
       // If there are new files, upload them and add to updatedImages
@@ -142,10 +161,11 @@ router.put("/:id", protect, admin, upload.array("images", 5), async (req, res) =
       //Update product fields
       product.name = name || product.name;
       product.description = description || product.description;
-      product.price = price || product.price;
+      product.basePrice = price || product.basePrice;
       product.discountPrice = discountPrice || product.discountPrice;
       product.countInStock = countInStock || product.countInStock;
       product.category = category || product.category;
+      product.subCategory = subCategory || product.subCategory;
       product.brand = brand || product.brand;
       product.sizes = Array.isArray(sizes) ? sizes : sizes?.split(",") || product.sizes;
       product.colors = Array.isArray(colors) ? colors : colors?.split(",") || product.colors;
@@ -153,10 +173,13 @@ router.put("/:id", protect, admin, upload.array("images", 5), async (req, res) =
       product.material = material || product.material;
       product.gender = gender || product.gender;
       product.images = updatedImages;
-      product.isFeatured =
-        isFeatured !== undefined ? isFeatured : product.isFeatured;
-      product.isPublished =
-        isPublished !== undefined ? isPublished : product.isPublished;
+      product.isFeatured = isFeatured !== undefined ? isFeatured : product.isFeatured;
+      product.isPublished = isPublished !== undefined ? isPublished : product.isPublished;
+      product.isBestSeller = isBestSeller !== undefined ? isBestSeller : product.isBestSeller;
+      product.isPremium = isPremium !== undefined ? isPremium : product.isPremium;
+      product.isSugarFree = isSugarFree !== undefined ? isSugarFree : product.isSugarFree;
+      product.festivalTags = Array.isArray(festivalTags) ? festivalTags : festivalTags?.split(",") || product.festivalTags;
+      product.productType = productType || product.productType;
       product.tags = tags || product.tags;
       product.dimensions = dimensions || product.dimensions;
       product.weight = weight || product.weight;
@@ -219,11 +242,11 @@ router.get("/", async (req, res) => {
 
     //Filter logic
     if (collection && collection.toLocaleLowerCase() !== "all") {
-      query.collections = collection;
+      query.collections = collection.toLowerCase();
     }
 
-    if (category && category.toLocaleLowerCase() !== "all") {
-      query.category = category;
+    if (category && category.toLowerCase() !== "all") {
+      query.category = { $regex: new RegExp(`^${category}$`, "i") };
     }
 
     if (material) {
@@ -247,9 +270,9 @@ router.get("/", async (req, res) => {
     }
 
     if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
+      query.basePrice = {};
+      if (minPrice) query.basePrice.$gte = Number(minPrice);
+      if (maxPrice) query.basePrice.$lte = Number(maxPrice);
     }
 
     if (search) {
@@ -264,10 +287,10 @@ router.get("/", async (req, res) => {
     if (sortBy) {
       switch (sortBy) {
         case "priceAsc":
-          sort = { price: 1 };
+          sort = { basePrice: 1 };
           break;
         case "priceDesc":
-          sort = { price: -1 };
+          sort = { basePrice: -1 };
           break;
         case "popularity":
           sort = { rating: -1 };
@@ -313,6 +336,19 @@ router.get("/new-arrivals", async (req, res) => {
     //Fetch 8 latest products
     const newArrivals = await Product.find().sort({ createdAt: -1 }).limit(8);
     res.json(newArrivals);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route GET /api/products/categories
+// @desc Retrieve all unique product categories
+// @access Public
+router.get("/categories", async (req, res) => {
+  try {
+    const categories = await Product.distinct("category");
+    res.json(categories);
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");

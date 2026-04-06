@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Hero from "../components/Layout/Hero"
+import CoutureSection from "../components/Layout/CoutureSection";
+import HampersSection from "../components/Layout/HampersSection";
+import PromoSection from "../components/Layout/PromoSection";
+import BlogSection from "../components/Layout/BlogSection";
+import TestimonialsSection from "../components/Layout/TestimonialsSection";
 import FeaturedCollection from "../components/Products/FeaturedCollection";
 import FeaturesSection from "../components/Products/FeaturesSection";
-import GenderCollectionSection from "../components/Products/GenderCollectionSection";
+import CategorySection from "../components/Products/CategorySection";
 import NewArrival from "../components/Products/NewArrival";
 import ProductDetails from "../components/Products/ProductDetails";
 import ProductGrid from "../components/Products/ProductGrid";
@@ -23,8 +28,7 @@ const Home = () => {
     // Fetch products for a specific collection
     dispatch(
       fetchProductsByFilters({
-        gender: "Women",
-        category: "Top Wear",
+        category: "Sweets",
         limit: 8,
       })
     );
@@ -48,10 +52,10 @@ const Home = () => {
   };
 
   const organizationSchema = {
-    name: "Rabbit E-commerce",
+    name: "Ganga Sweets",
     url: window.location.origin,
-    logo: `${window.location.origin}/logo.png`, // User should ensure logo.png exists in public
-    description: "Rabbit E-commerce is a premium clothing store in Etah by Ajyendra Singh Jadon.",
+    logo: `${window.location.origin}/logo.png`,
+    description: "Ganga Sweets - Premium Pure Ghee Sweets, Namkeen & Gifting in Etah.",
   };
 
   return (
@@ -61,30 +65,18 @@ const Home = () => {
       exit="exit"
       variants={pageVariants}
     >
-      <MetaHTML 
-        title="Rabbit E-commerce - Best Clothing Store in Etah"
-        description="Shop the latest trends in fashion at Rabbit E-commerce. Explore our premium collection of Men and Women wear with full cart and secure payments."
+      <MetaHTML
+        title="Ganga Sweets - Pure Ghee Mithai & Premium Bakery"
+        description="Indulge in the royalty of Ganga Sweets. Shop authentic pure ghee mithai, namkeen, and luxury gift boxes with nationwide delivery."
       />
       <SchemaMarkup type="Organization" data={organizationSchema} />
       <Hero />
-      <GenderCollectionSection />
+      <CoutureSection />
+      <HampersSection />
+      <PromoSection />
+      <BlogSection />
+      <TestimonialsSection />
       <NewArrival />
-
-      {/* Best Seller */}
-      <h2 className="text-[18px] text-center font-medium mb-4 uppercase tracking-tight">Best Seller</h2>
-
-      {bestSellerProduct ? (<ProductDetails productId={bestSellerProduct._id} />) : (
-        <ProductDetailsSkeleton />
-      )}
-
-      <div className="container mx-auto">
-        <h2 className="text-[18px] text-center font-medium mb-12 uppercase tracking-tight">
-          Top Wears For Women
-        </h2>
-        <ProductGrid products={products} loading={loading} error={error} />
-      </div>
-      <FeaturedCollection />
-      <FeaturesSection />
     </motion.div>
   );
 };

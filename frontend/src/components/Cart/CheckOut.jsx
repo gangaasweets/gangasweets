@@ -5,6 +5,7 @@ import RazorpayButton from "./RazorpayButton";
 import { useDispatch, useSelector } from "react-redux";
 import { createCheckout } from "../../redux/slices/checkoutSlice";
 import axios from "axios";
+import { toast } from "sonner";
 
 const CheckOut = () => {
     const navigate = useNavigate();
@@ -15,13 +16,17 @@ const CheckOut = () => {
 
     const [checkoutId, setCheckoutId] = useState(null);
 
+    const [deliveryDate, setDeliveryDate] = useState("");
+    const [deliveryTimeSlot, setDeliveryTimeSlot] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState("razorpay"); // Default to razorpay
+
     const [shippingAddress, setShippingAddress] = useState({
         firstName: "",
         lastName: "",
         address: "",
         city: "",
         postalCode: "",
-        country: "",
+        country: "India",
         phone: "",
     });
 
@@ -40,19 +45,45 @@ const CheckOut = () => {
         shippingAddress.city &&
         shippingAddress.country &&
         shippingAddress.phone.length === 10 &&
-        shippingAddress.postalCode.length >= 5;
+        shippingAddress.postalCode.length >= 5 &&
+        deliveryDate &&
+        deliveryTimeSlot;
 
     // Create checkout
     const handleCreateCheckout = async (e) => {
         e.preventDefault();
 
-        if (shippingAddress.phone.length !== 10) {
-            alert("Phone number must be exactly 10 digits");
+        // Specific Validation Checks for better UX
+        if (!shippingAddress.firstName?.trim()) {
+            toast.error("Please enter your first name.");
             return;
         }
-
-        if (shippingAddress.postalCode.length < 5) {
-            alert("Enter a valid postal code");
+        if (!shippingAddress.lastName?.trim()) {
+            toast.error("Please enter your last name.");
+            return;
+        }
+        if (!shippingAddress.address?.trim()) {
+            toast.error("Please enter your delivery address.");
+            return;
+        }
+        if (!shippingAddress.city?.trim()) {
+            toast.error("Please enter your city.");
+            return;
+        }
+        if (!shippingAddress.postalCode?.trim() || shippingAddress.postalCode.length < 5) {
+            toast.error("Please enter a valid postal code (min 5 digits).");
+            return;
+        }
+        if (!shippingAddress.phone?.trim() || shippingAddress.phone.length !== 10) {
+            toast.error("Internal Error: Phone number must be exactly 10 digits.");
+            return;
+        }
+        if (!deliveryDate) {
+            toast.error("Please select a delivery date.");
+            return;
+        }
+        if (!deliveryTimeSlot) {
+            toast.error("Please select a preferred delivery time slot.");
             return;
         }
 
@@ -61,22 +92,29 @@ const CheckOut = () => {
                 createCheckout({
                     checkoutItems: cart.products,
                     shippingAddress,
-                    paymentMethod: "razorpay",
+                    deliveryDate,
+                    deliveryTimeSlot,
+                    paymentMethod,
                     totalPrice: cart.totalPrice,
                 })
             );
 
             if (res.payload && res.payload._id) {
                 setCheckoutId(res.payload._id);
+                // If COD or Demo, finalize immediately
+                if (paymentMethod === "COD" || paymentMethod === "Demo Payment") {
+                    await handleFinalizeCheckout(res.payload._id);
+                }
             }
         }
     };
 
     // Finalize checkout
-    const handleFinalizeCheckout = async () => {
+    const handleFinalizeCheckout = async (cid) => {
+        const idToFinalize = cid || checkoutId;
         try {
             await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/finalize`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${idToFinalize}/finalize`,
                 {},
                 {
                     headers: {
@@ -87,7 +125,7 @@ const CheckOut = () => {
             navigate("/order-confirmation");
         } catch (err) {
             console.error(err);
-            alert("Error finalizing checkout");
+            toast.error("Error finalizing checkout");
         }
     };
 
@@ -212,18 +250,95 @@ const CheckOut = () => {
                                 setShippingAddress({ ...shippingAddress, phone: value });
                             }
                         }}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-md mb-4 text-[13px]"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-md mb-6 text-[13px]"
                         required
                     />
+
+                    {/* DELIVERY SCHEDULE */}
+                    <h3 className="text-[16px] font-medium mb-4">Delivery Schedule</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label className="block text-[12px] text-gray-500 mb-1">Select Delivery Date</label>
+                            <input
+                                type="date"
+                                min={new Date().toISOString().split("T")[0]}
+                                value={deliveryDate}
+                                onChange={(e) => setDeliveryDate(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-200 rounded-md text-[13px]"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[12px] text-gray-500 mb-1">Select Time Slot</label>
+                            <select
+                                value={deliveryTimeSlot}
+                                onChange={(e) => setDeliveryTimeSlot(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-200 rounded-md text-[13px]"
+                                required
+                            >
+                                <option value="">Select a slot</option>
+                                <option value="10:00 AM - 01:00 PM">10:00 AM - 01:00 PM</option>
+                                <option value="01:00 PM - 04:00 PM">01:00 PM - 04:00 PM</option>
+                                <option value="04:00 PM - 07:00 PM">04:00 PM - 07:00 PM</option>
+                                <option value="07:00 PM - 10:00 PM">07:00 PM - 10:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* PAYMENT METHOD */}
+                    <h3 className="text-[16px] font-medium mb-4">Payment Method</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <label className={`flex-1 flex items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === "razorpay" ? "border-[#D4AF37] bg-[#FFF8E7]" : "border-gray-200 hover:border-gray-300"}`}>
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="razorpay"
+                                checked={paymentMethod === "razorpay"}
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                                className="hidden"
+                            />
+                            <div className="text-center">
+                                <span className={`block text-[13px] font-bold uppercase tracking-wider ${paymentMethod === "razorpay" ? "text-[#D4AF37]" : "text-gray-700"}`}>Online</span>
+                                <span className="text-[10px] text-gray-500">Card/UPI</span>
+                            </div>
+                        </label>
+                        <label className={`flex-1 flex items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === "COD" ? "border-[#D4AF37] bg-[#FFF8E7]" : "border-gray-200 hover:border-gray-300"}`}>
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="COD"
+                                checked={paymentMethod === "COD"}
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                                className="hidden"
+                            />
+                            <div className="text-center">
+                                <span className={`block text-[13px] font-bold uppercase tracking-wider ${paymentMethod === "COD" ? "text-[#D4AF37]" : "text-gray-700"}`}>Cash (COD)</span>
+                                <span className="text-[10px] text-gray-500">Pay on delivery</span>
+                            </div>
+                        </label>
+                        <label className={`flex-1 flex items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === "Demo Payment" ? "border-[#D4AF37] bg-[#FFF8E7]" : "border-gray-200 hover:border-gray-300"}`}>
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="Demo Payment"
+                                checked={paymentMethod === "Demo Payment"}
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                                className="hidden"
+                            />
+                            <div className="text-center">
+                                <span className={`block text-[13px] font-bold uppercase tracking-wider ${paymentMethod === "Demo Payment" ? "text-[#D4AF37]" : "text-gray-700"}`}>Demo</span>
+                                <span className="text-[10px] text-gray-500">Simulation Only</span>
+                            </div>
+                        </label>
+                    </div>
 
                     {/* BUTTON */}
                     {!checkoutId ? (
                         <button
                             type="submit"
-                            disabled={!isFormValid}
-                            className="w-full bg-black text-white py-3 rounded-md text-[13px] disabled:bg-gray-400 cursor-pointer"
+                            className="w-full bg-[#D4AF37] text-white py-3 rounded-md text-[14px] font-bold uppercase tracking-widest cursor-pointer shadow-md hover:bg-[#B8962E] transition-all"
                         >
-                            Continue to Payment
+                            {(paymentMethod === "COD" || paymentMethod === "Demo Payment") ? "Confirm Order" : "Continue to Payment"}
                         </button>
                     ) : (
                         <div className="space-y-4">
@@ -263,7 +378,7 @@ const CheckOut = () => {
                         </div>
                         {/* Right: Price */}
                         <div className="text-[14px] font-medium text-gray-900 whitespace-nowrap">
-                            ${product.price?.toLocaleString() || "0"}
+                            ₹{product.price?.toLocaleString() || "0"}
                         </div>
                     </div>))}
                 </div>
@@ -272,7 +387,7 @@ const CheckOut = () => {
                         Total
                     </span>
                     <span className="text-[18px] font-medium text-gray-900">
-                        $
+                        ₹
                         {cart.totalPrice?.toLocaleString() || "0"}
                     </span>
                 </div>

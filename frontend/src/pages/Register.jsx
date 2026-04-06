@@ -70,7 +70,7 @@ const Register = () => {
                     className="w-full max-w-md bg-white p-8 rounded-lg border border-gray-300 shadow-sm"
                 >
                     <div className="flex justify-center mb-6">
-                        <h2 className="text-[24px] font-medium tracking-tight">Rabbit</h2>
+                        <h2 className="text-[24px] font-bold tracking-tighter text-[#D4AF37]">GANGA SWEETS</h2>
                     </div>
 
                     <h2 className="text-[18px] font-medium text-center mb-4">

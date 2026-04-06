@@ -1,96 +1,204 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSiteSettings } from "../../redux/slices/siteSettingsSlice";
-import { FiEdit2 } from "react-icons/fi";
-import ImageEditModal from "../Admin/ImageEditModal";
-import heroImgLocal from "../../assets/rabbit-hero.webp";
+import { useSelector } from "react-redux";
+
+// Static Assets
+import hero1 from "../../assets/1st hero image.webp";
+import hero2 from "../../assets/2nd hero image.webp";
+import hero3 from "../../assets/3rd hero image.webp";
+import hero4 from "../../assets/4th hero image.webp";
+import greenTexture from "../../assets/greenTexture.webp";
+import pinkTexture from "../../assets/pinkTexture.webp";
+
+const slides = [
+  {
+    id: 1,
+    image: hero1,
+    type: "full",
+    title: "The Royalty of Traditional Mithai",
+    subtitle: "Experience the pure bliss of authentic Indian sweets crafted with love and tradition.",
+    textColor: "text-[#D4AF37]",
+    btnText: "Explore Collection",
+  },
+  {
+    id: 2,
+    image: hero2,
+    background: greenTexture,
+    type: "split",
+    title: "Pure Ghee Delights",
+    subtitle: "Savor the rich aroma and taste of our premium ghee-based sweets.",
+    textColor: "text-white",
+    btnText: "Shop Now",
+  },
+  {
+    id: 3,
+    image: hero3,
+    background: pinkTexture,
+    type: "split",
+    title: "Festive Gift Boxes",
+    subtitle: "Perfectly curated collections for your loved ones this festive season.",
+    textColor: "text-[#D4AF37]",
+    btnText: "Shop Now",
+  },
+  {
+    id: 4,
+    image: hero4,
+    background: pinkTexture,
+    type: "split",
+    title: "Authentic Bengali Sweets",
+    subtitle: "Authentic Chhena based sweets delivered fresh to your doorstep.",
+    textColor: "text-[#D4AF37]",
+    btnText: "Shop Now",
+  },
+];
 
 const Hero = () => {
-    const dispatch = useDispatch();
-    const { settings, loading } = useSelector((state) => state.siteSettings);
-    const { user } = useSelector((state) => state.auth);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const { settings } = useSelector((state) => state.siteSettings);
 
-    useEffect(() => {
-        if (!settings) {
-            dispatch(fetchSiteSettings());
-        }
-    }, [dispatch, settings]);
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  }, []);
 
-    const heroImageUrl = settings?.heroImage?.url || heroImgLocal;
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 6000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
-    if (loading && !settings) {
-        return (
-            <div className="w-full h-100 md:h-120 lg:h-187.5 bg-gray-100 animate-pulse flex items-center justify-center">
-                <span className="text-gray-400 font-medium">Loading Hero...</span>
-            </div>
-        );
-    }
-
-    return (
-        <section className="relative group">
-            <motion.img
-                src={heroImageUrl}
-                alt="rabbit hero"
-                className="w-full h-100 md:h-120 lg:h-187.5 object-cover"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8 }}
-            />
-
-            {/* Admin Edit Overlay */}
-            {user?.role === "admin" && (
-                <button
-                    onClick={() => setIsEditModalOpen(true)}
-                    className="absolute top-4 right-4 bg-white/90 p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#ea2e0e] hover:text-white z-20"
-                >
-                    <FiEdit2 size={18} />
-                </button>
-            )}
-
-            <div className="absolute bg-black/5 inset-0 flex items-center justify-center">
-                <div className="text-center text-white p-6">
+  return (
+    <>
+      <section className="relative h-[600px] md:h-[600px] lg:h-[750px] overflow-hidden bg-[#FFF8E7]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="absolute inset-0 w-full h-full"
+          >
+            {slides[currentSlide].type === "full" ? (
+              // Full Image Slide (Slide 1)
+              <div className="relative w-full h-full">
+                <motion.img
+                  src={slides[currentSlide].image}
+                  alt="Ganga Sweets Hero"
+                  className="w-full h-full object-cover"
+                  initial={{ scale: 1.1 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 6, ease: "linear" }}
+                />
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-center p-6">
+                  <div className="max-w-4xl">
                     <motion.h1
-                        className="text-4xl md:text-9xl font-bold tracking-tighter uppercase mb-4"
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
+                      initial={{ y: 30, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.3, duration: 0.6 }}
+                      className={`text-4xl md:text-7xl lg:text-8xl font-bold uppercase tracking-tighter mb-4 ${slides[currentSlide].textColor} drop-shadow-2xl`}
                     >
-                        Vacation <br /> Ready
+                      {slides[currentSlide].title}
                     </motion.h1>
                     <motion.p
-                        className="text-sm tracking-tighter md:text-lg mb-6"
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
+                      initial={{ y: 30, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.5, duration: 0.6 }}
+                      className="text-white text-lg md:text-2xl mb-8 font-light tracking-wide max-w-2xl mx-auto"
                     >
-                        Explore our vacation ready outfits with fast worldwide shipping.
+                      {slides[currentSlide].subtitle}
                     </motion.p>
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
+                      initial={{ y: 30, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.7, duration: 0.6 }}
                     >
-                        <Link to="/collections/all" className="bg-white text-gray-950 px-6 py-2 rounded-sm text-lg inline-block hover:scale-105 transition-transform duration-300">
-                            Shop Now
-                        </Link>
+                      <Link to="/collections/all" className="gold-btn inline-block">
+                        {slides[currentSlide].btnText}
+                      </Link>
                     </motion.div>
+                  </div>
                 </div>
-            </div>
-
-            <AnimatePresence>
-                {isEditModalOpen && (
-                    <ImageEditModal
-                        field="heroImage"
-                        currentUrl={heroImageUrl}
-                        onClose={() => setIsEditModalOpen(false)}
+              </div>
+            ) : (
+              // Split Content Slide (Slide 2, 3, 4)
+              <div
+                className="flex flex-col md:flex-row w-full h-full items-center"
+                style={{
+                  backgroundImage: `url(${slides[currentSlide].background})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              >
+                {/* Left Side - Image */}
+                <div className="w-full md:w-1/2 h-[45%] md:h-full flex items-center justify-center p-6 md:p-12">
+                  <motion.div
+                    initial={{ x: -50, opacity: 0, scale: 0.9 }}
+                    animate={{ x: 0, opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8 }}
+                    className="relative group w-full h-full max-w-sm lg:max-w-lg"
+                  >
+                    <div className="absolute inset-0 border-2 border-[#D4AF37] translate-x-3 translate-y-3 rounded-2xl group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-300"></div>
+                    <img
+                      src={slides[currentSlide].image}
+                      alt="Product"
+                      className="relative z-10 w-full h-full object-cover rounded-2xl shadow-2xl"
                     />
-                )}
-            </AnimatePresence>
-        </section>
-    );
+                  </motion.div>
+                </div>
+
+                {/* Right Side - Content */}
+                <div className="w-full md:w-1/2 h-[55%] md:h-full flex flex-col justify-start md:justify-center items-center md:items-start p-6 md:p-16 text-center md:text-left">
+                  <motion.h2
+                    initial={{ x: 50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className={`text-3xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tighter mb-4 ${slides[currentSlide].textColor}`}
+                  >
+                    {slides[currentSlide].title}
+                  </motion.h2>
+                  <motion.p
+                    initial={{ x: 50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    className={`${slides[currentSlide].id === 2 ? 'text-gray-100' : 'text-gray-700'} text-base md:text-xl mb-6 max-w-md font-medium leading-relaxed`}
+                  >
+                    {slides[currentSlide].subtitle}
+                  </motion.p>
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.6 }}
+                  >
+                    <Link
+                      to="/collections/all"
+                      className={`${slides[currentSlide].id === 2 ? 'bg-white text-green-900 hover:bg-gray-100' : 'gold-btn'} py-2.5 md:py-4 px-8 md:px-12 text-sm md:text-lg inline-block rounded-full shadow-lg transition-all font-bold tracking-widest uppercase`}
+                    >
+                      {slides[currentSlide].btnText}
+                    </Link>
+                  </motion.div>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </section>
+
+      {/* Navigation Dots - Moved outside hero container */}
+      <div className="flex justify-center space-x-3 py-8 bg-[#FFF8E7]">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`transition-all duration-300 rounded-full cursor-pointer ${currentSlide === index
+                ? "bg-[#D4AF37] w-12 h-2.5"
+                : "bg-gray-300 hover:bg-gray-400 w-2.5 h-2.5"
+              }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </>
+  );
 };
 
 export default Hero;

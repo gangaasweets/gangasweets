@@ -1,56 +1,41 @@
-import { useEffect, useState } from "react";
-import { FiTrash2, FiUploadCloud } from "react-icons/fi";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
-import axios from "axios";
-
-import { fetchProductDetails } from "../../redux/slices/productsSlice";
+import { fetchProductDetails, fetchCategories } from "../../redux/slices/productsSlice";
 import { updateProduct, createProduct } from "../../redux/slices/adminProductSlice";
-
-const categories = [
-  "Shoes",
-  "Clothing",
-  "Accessories",
-  "Bags",
-  "Hoodies",
-  "T-Shirts"
-];
-
-const collectionsList = [
-  "Summer",
-  "Winter",
-  "Streetwear",
-  "Best Sellers",
-  "New Arrivals"
-];
+import { FiExternalLink, FiTrash2, FiUploadCloud } from "react-icons/fi";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const EditProductPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { selectedProduct, loading, error } = useSelector((state) => state.products);
+  const { selectedProduct, categories, loading, error } = useSelector((state) => state.products);
 
   const [productData, setProductData] = useState({
     name: "",
     description: "",
-    price: 0,
+    basePrice: 0,
     countInStock: 0,
     sku: "",
     category: "",
     brand: "",
-    sizes: [],
-    colors: [],
-    collections: "",
-    material: "",
-    gender: "",
+    subCategory: "",
+    productType: "standard",
+    isBestSeller: false,
+    isPremium: false,
+    isSugarFree: false,
+    festivalTags: [],
     images: [],
   });
 
-  const [colorsInput, setColorsInput] = useState("");
+  const [festivalTagsInput, setFestivalTagsInput] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
+    dispatch(fetchCategories());
     if (id) {
       dispatch(fetchProductDetails(id));
     } else {
@@ -69,8 +54,8 @@ const EditProductPage = () => {
           }))
           : [],
       });
-      if (selectedProduct.colors) {
-        setColorsInput(selectedProduct.colors.join(", "));
+      if (selectedProduct.festivalTags) {
+        setFestivalTagsInput(selectedProduct.festivalTags.join(", "));
       }
     }
   }, [id, selectedProduct]);
@@ -79,19 +64,20 @@ const EditProductPage = () => {
     setProductData({
       name: "",
       description: "",
-      price: 0,
+      basePrice: 0,
       countInStock: 0,
       sku: "",
       category: "",
       brand: "",
-      sizes: [],
-      colors: [],
-      collections: "",
-      material: "",
-      gender: "",
+      subCategory: "",
+      productType: "standard",
+      isBestSeller: false,
+      isPremium: false,
+      isSugarFree: false,
+      festivalTags: [],
       images: [],
     });
-    setColorsInput("");
+    setFestivalTagsInput("");
   };
 
   const handleChange = (e) => {
@@ -118,39 +104,32 @@ const EditProductPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const colorsArray = colorsInput
+    const tagsArray = festivalTagsInput
       .split(",")
-      .map((color) => color.trim())
-      .filter((color) => color !== "");
-
-    if (!productData.sizes.length || colorsArray.length === 0) {
-      alert("Please select at least one size and color.");
-      return;
-    }
+      .map((tag) => tag.trim())
+      .filter((tag) => tag !== "");
 
     const formData = new FormData();
     formData.append("name", productData.name);
     formData.append("description", productData.description);
-    formData.append("price", productData.price);
+    formData.append("price", productData.basePrice); // Backend expects "price"
     formData.append("countInStock", productData.countInStock);
     formData.append("sku", productData.sku);
     formData.append("category", productData.category);
+    formData.append("subCategory", productData.subCategory);
     formData.append("brand", productData.brand);
-    formData.append("sizes", productData.sizes.join(","));
-    formData.append("colors", colorsArray.join(","));
-    formData.append("collections", productData.collections);
-    formData.append("material", productData.material);
-    formData.append("gender",
-      productData.gender === "men" ? "Men" :
-        productData.gender === "women" ? "Women" : "Unisex"
-    );
+    formData.append("productType", productData.productType);
+    formData.append("isBestSeller", productData.isBestSeller);
+    formData.append("isPremium", productData.isPremium);
+    formData.append("isSugarFree", productData.isSugarFree);
+    formData.append("festivalTags", tagsArray.join(","));
 
     // Filter existing images and new files
     const existingImages = productData.images
       .filter(img => !img.file)
       .map(img => ({ url: img.url, altText: img.altText }));
 
-    formData.append("images", JSON.stringify(existingImages));
+    formData.append("existingImages", JSON.stringify(existingImages));
 
     productData.images.forEach(img => {
       if (img.file) {
@@ -158,14 +137,31 @@ const EditProductPage = () => {
       }
     });
 
+    setIsUpdating(true);
     if (id) {
       dispatch(updateProduct({ id, productData: formData }))
         .unwrap()
-        .then(() => navigate("/admin/products"));
+        .then(() => {
+          toast.success("Product updated successfully!");
+          navigate("/admin/products");
+        })
+        .catch((err) => {
+          toast.error(err?.message || "Failed to update product");
+          console.error(err);
+        })
+        .finally(() => setIsUpdating(false));
     } else {
       dispatch(createProduct(formData))
         .unwrap()
-        .then(() => navigate("/admin/products"));
+        .then(() => {
+          toast.success("Product created successfully!");
+          navigate("/admin/products");
+        })
+        .catch((err) => {
+          toast.error(err?.message || "Failed to create product");
+          console.error(err);
+        })
+        .finally(() => setIsUpdating(false));
     }
   };
 
@@ -178,7 +174,6 @@ const EditProductPage = () => {
     exit: { opacity: 0, y: -20, transition: { duration: 0.4 } },
   };
 
-  const sizeOptions = ["XS", "S", "M", "L", "XL"];
 
   return (
     <motion.div
@@ -218,11 +213,11 @@ const EditProductPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
-            <label className="block text-[13px] font-medium text-gray-900 mb-2">Price</label>
+            <label className="block text-[13px] font-medium text-gray-900 mb-2">Base Price (1kg / full unit) ₹</label>
             <input
               type="number"
-              name="price"
-              value={productData.price}
+              name="basePrice"
+              value={productData.basePrice}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-gray-900 outline-none"
               required
@@ -243,126 +238,116 @@ const EditProductPage = () => {
         </div>
 
         <div className="mb-6">
-          <label className="block text-[13px] font-medium text-gray-900 mb-2">SKU</label>
+          <div className="flex justify-between items-center mb-2">
+            <label className="block text-[13px] font-medium text-gray-900">Category</label>
+            <Link to="/admin/categories" className="text-[12px] text-[#D4AF37] flex items-center gap-1 hover:underline">
+              Manage Categories <FiExternalLink size={12} />
+            </Link>
+          </div>
+          <select
+            name="category"
+            value={productData.category}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-gray-900 outline-none bg-white"
+            required
+          >
+            <option value="">Select Category</option>
+            {categories && categories.length > 0 ? (
+              categories.map((cat) => (
+                <option key={cat._id} value={cat.name.toLowerCase()}>
+                  {cat.name}
+                </option>
+              ))
+            ) : (
+              <option disabled>Loading categories...</option>
+            )}
+          </select>
+        </div>
+
+        {/* SUBCATEGORY */}
+        <div className="mb-6">
+          <label className="block text-[13px] font-medium text-gray-900 mb-2">Sub Category</label>
           <input
             type="text"
-            name="sku"
-            value={productData.sku}
+            name="subCategory"
+            value={productData.subCategory}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-gray-900 outline-none"
-            required
+            placeholder="e.g. Kaju, Bengali"
           />
         </div>
-
-        {/* Sizes */}
-        <div className="mb-6">
-          <label className="block text-[13px] font-medium text-gray-900 mb-2">Sizes</label>
-
-          <div className="flex gap-3 flex-wrap">
-            {sizeOptions.map((size) => (
-              <button
-                type="button"
-                key={size}
-                onClick={() => {
-                  const updatedSizes = productData.sizes.includes(size)
-                    ? productData.sizes.filter((s) => s !== size)
-                    : [...productData.sizes, size];
-
-                  setProductData({ ...productData, sizes: updatedSizes });
-                }}
-                className={`px-5 py-3 border rounded-md transition text-[13px] font-medium
-        ${productData.sizes.includes(size)
-                    ? "bg-black text-white border-black"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                  }`}
-              >
-                {size}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Colors */}
-        <div className="mb-6">
-          <label className="block text-[13px] font-medium text-gray-900 mb-2">Colors (CSV)</label>
-          <input
-            type="text"
-            placeholder="e.g. Red, Blue, Black"
-            value={colorsInput}
-            onChange={(e) => setColorsInput(e.target.value)}
-            className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-gray-900 outline-none"
-          />
-          <p className="text-[12px] text-gray-500 mt-1">
-            Enter colors separated by commas
-          </p>
-
-          <div className="flex flex-wrap gap-2 mt-2">
-            {colorsInput.split(",").map((color, i) => (
-              color.trim() && (
-                <span key={i} className="px-3 py-1 bg-gray-100 text-[12px] rounded border border-gray-200 text-gray-600">
-                  {color.trim()}
-                </span>
-              )
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          {/* CATEGORY AUTOCOMPLETE */}
-          <div>
-            <label className="block text-[13px] font-medium text-gray-900 mb-2">Category</label>
+        {/* FLAG TOGGLES */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <label className="flex items-center gap-2">
             <input
-              list="category-options"
-              name="category"
-              value={productData.category}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-gray-900 outline-none"
-              required
+              type="checkbox"
+              name="isBestSeller"
+              checked={productData.isBestSeller}
+              onChange={(e) => setProductData({ ...productData, isBestSeller: e.target.checked })}
+              className="w-4 h-4"
             />
-            <datalist id="category-options">
-              {categories.map((cat) => (
-                <option key={cat} value={cat} />
-              ))}
-            </datalist>
-          </div>
-
-          {/* COLLECTION AUTOCOMPLETE */}
-          <div>
-            <label className="block text-[13px] font-medium text-gray-900 mb-2">Collection</label>
+            <span className="text-[13px] text-gray-700">Is Best Seller?</span>
+          </label>
+          <label className="flex items-center gap-2">
             <input
-              list="collection-options"
-              name="collections"
-              value={productData.collections}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-gray-900 outline-none"
-              required
+              type="checkbox"
+              name="isPremium"
+              checked={productData.isPremium}
+              onChange={(e) => setProductData({ ...productData, isPremium: e.target.checked })}
+              className="w-4 h-4"
             />
-            <datalist id="collection-options">
-              {collectionsList.map((col) => (
-                <option key={col} value={col} />
+            <span className="text-[13px] text-gray-700">Is Premium?</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="isSugarFree"
+              checked={productData.isSugarFree}
+              onChange={(e) => setProductData({ ...productData, isSugarFree: e.target.checked })}
+              className="w-4 h-4"
+            />
+            <span className="text-[13px] text-gray-700">Is Sugar Free?</span>
+          </label>
+        </div>
+
+        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* PRODUCT TYPE */}
+          <div>
+            <label className="block text-[13px] font-medium text-gray-900 mb-2">Product Type</label>
+            <select
+              name="productType"
+              value={productData.productType}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-gray-900 outline-none bg-white"
+            >
+              <option value="standard">Standard (Weight based: 250g, 500g, 1kg)</option>
+              <option value="simple">Simple (Quantity only)</option>
+            </select>
+          </div>
+
+          {/* FESTIVAL TAGS */}
+          <div>
+            <label className="block text-[13px] font-medium text-gray-900 mb-2">Festival Tags (CSV)</label>
+            <input
+              type="text"
+              placeholder="e.g. Diwali, Holi, Rakhi"
+              value={festivalTagsInput}
+              onChange={(e) => setFestivalTagsInput(e.target.value)}
+              className="w-full border border-gray-300 rounded-md p-3 text-[14px] focus:ring-1 focus:ring-gray-900 outline-none"
+            />
+            <div className="flex flex-wrap gap-2 mt-2">
+              {festivalTagsInput.split(",").map((tag, i) => (
+                tag.trim() && (
+                  <span key={i} className="px-3 py-1 bg-yellow-100 text-[12px] rounded border border-yellow-200 text-yellow-800 font-medium">
+                    {tag.trim()}
+                  </span>
+                )
               ))}
-            </datalist>
+            </div>
           </div>
         </div>
 
-        <div className="mb-8">
-          <label className="block text-[13px] font-medium text-gray-900 mb-3">Gender</label>
-          <div className="flex gap-4 p-1 bg-gray-100 rounded-lg w-fit">
-            {["men", "women", "unisex"].map((g) => (
-              <button
-                key={g}
-                type="button"
-                onClick={() => setProductData({ ...productData, gender: g })}
-                className={`px-6 py-2.5 rounded-md text-[13px] font-medium transition-all duration-200 capitalize
-                  ${productData.gender === g 
-                    ? "bg-[#ea2e0e] text-white shadow-sm" 
-                    : "text-gray-500 hover:text-gray-700"}`}
-              >
-                {g}
-              </button>
-            ))}
-          </div>
-        </div>
+
 
         <div className="mb-6">
           <label className="block font-semibold mb-3">Upload Images</label>
@@ -399,9 +384,10 @@ const EditProductPage = () => {
 
         <button
           type="submit"
-          className="w-full bg-green-500 text-white py-3 rounded-md hover:bg-green-600 transition font-medium text-[14px]"
+          disabled={isUpdating}
+          className={`w-full bg-green-500 text-white py-3 rounded-md hover:bg-green-600 transition font-medium text-[14px] ${isUpdating ? "opacity-50 cursor-not-allowed" : ""}`}
         >
-          {id ? "Update Product" : "Create Product"}
+          {isUpdating ? "Updating..." : id ? "Update Product" : "Create Product"}
         </button>
       </form>
     </motion.div>

@@ -1,4 +1,4 @@
-import { HiArrowPathRoundedSquare, HiOutlineCreditCard, HiShoppingBag } from "react-icons/hi2"
+import { HiCheckBadge, HiClock, HiTruck } from "react-icons/hi2"
 import { motion } from "framer-motion"
 
 const FeaturesSection = () => {
@@ -25,14 +25,14 @@ const FeaturesSection = () => {
                         visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
                     }}
                 >
-                    <div className="p-4 rounded-full mb-4 bg-gray-50 group-hover:bg-gray-100 transition-colors">
-                        <HiShoppingBag className="text-xl" />
+                    <div className="p-4 rounded-full mb-4 bg-[#FFF8E7] group-hover:bg-[#F8C8DC] transition-colors">
+                        <HiCheckBadge className="text-2xl text-[#D4AF37]" />
                     </div>
-                    <h4 className="tracking-tight mb-2 font-medium text-[14px] uppercase">
-                        FREE INTERNATIONAL SHIPPING
+                    <h4 className="tracking-tight mb-2 font-bold text-[14px] uppercase">
+                        Pure Ghee & Quality
                     </h4>
                     <p className="text-gray-600 text-[13px] tracking-tight">
-                        On all orders over $100.00
+                        Crafted with premium ingredients and traditional recipes.
                     </p>
                 </motion.div>
                 {/* Feature 2 */}
@@ -43,14 +43,14 @@ const FeaturesSection = () => {
                         visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
                     }}
                 >
-                    <div className="p-4 rounded-full mb-4 bg-gray-50 group-hover:bg-gray-100 transition-colors">
-                        <HiArrowPathRoundedSquare className="text-xl" />
+                    <div className="p-4 rounded-full mb-4 bg-[#FFF8E7] group-hover:bg-[#F8C8DC] transition-colors">
+                        <HiClock className="text-2xl text-[#D4AF37]" />
                     </div>
-                    <h4 className="tracking-tight mb-2 font-medium text-[14px] uppercase">
-                        45 DAYS RETURN
+                    <h4 className="tracking-tight mb-2 font-bold text-[14px] uppercase">
+                        Freshness Guaranteed
                     </h4>
                     <p className="text-gray-600 text-[13px] tracking-tight">
-                        Money back guarantee
+                        Prepared fresh daily for the perfect taste and texture.
                     </p>
                 </motion.div>
                 {/* Feature 3 */}
@@ -61,14 +61,14 @@ const FeaturesSection = () => {
                         visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
                     }}
                 >
-                    <div className="p-4 rounded-full mb-4 bg-gray-50 group-hover:bg-gray-100 transition-colors">
-                        <HiOutlineCreditCard className="text-xl" />
+                    <div className="p-4 rounded-full mb-4 bg-[#FFF8E7] group-hover:bg-[#F8C8DC] transition-colors">
+                        <HiTruck className="text-2xl text-[#D4AF37]" />
                     </div>
-                    <h4 className="tracking-tight mb-2 font-medium text-[14px] uppercase">
-                        SECURE CHECKOUT
+                    <h4 className="tracking-tight mb-2 font-bold text-[14px] uppercase">
+                        Express Local Delivery
                     </h4>
                     <p className="text-gray-600 text-[13px] tracking-tight">
-                        100% secure checkout process
+                        Same day delivery available for local Etah orders.
                     </p>
                 </motion.div>
             </motion.div>

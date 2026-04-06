@@ -15,14 +15,14 @@ const sendEmail = ({ to, subject, text, html }) => {
     }
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    
+
     const fromAddress = process.env.EMAIL_FROM || "noreply@yourstore.com";
 
     const msg = {
         to,
         from: {
             email: fromAddress,
-            name: "Rabbit E-commerce",
+            name: "Ganga Sweets",
         },
         subject,
         text,
@@ -40,7 +40,7 @@ const sendEmail = ({ to, subject, text, html }) => {
                 console.error("[SendGrid Error Details]:", JSON.stringify(error.response.body, null, 2));
             }
         });
-        
+
     // Return void or a success indicator immediately
     return true;
 };

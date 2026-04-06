@@ -1,9 +1,9 @@
 import { Helmet } from "react-helmet-async";
 
 const MetaHTML = ({ title, description, canonical, ogImage, ogType }) => {
-  const siteName = "Rabbit E-commerce";
-  const fullTitle = title ? `${title} | ${siteName}` : `${siteName} - Clothing Store in Etah`;
-  const defaultDescription = "Rabbit E-commerce is a premium clothing store in Etah by Ajyendra Singh Jadon. This SEO-optimized demo website features a full cart, secure payments, and admin panel.";
+  const siteName = "Ganga Sweets";
+  const fullTitle = title ? `${title} | ${siteName}` : "Ganga Sweets - Premium Pure Ghee Mithai & Gifting";
+  const defaultDescription = "Ganga Sweets is a premium sweet shop in Etah by Ajyendra Singh Jadon. We offer authentic pure ghee mithai, namkeen, and luxury gift boxes with nationwide delivery.";
   const metaDescription = description || defaultDescription;
   const currentUrl = canonical || window.location.href;
 

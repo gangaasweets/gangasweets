@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    price: {
+    basePrice: {
       type: Number,
       required: true,
     },
@@ -35,24 +35,28 @@ const productSchema = new mongoose.Schema(
     brand: {
       type: String,
     },
-    sizes: {
+    subCategory: {
+      type: String,
+    },
+    productType: {
+      type: String,
+      enum: ["standard", "simple"],
+      default: "standard",
+    },
+    isBestSeller: {
+      type: Boolean,
+      default: false,
+    },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+    isSugarFree: {
+      type: Boolean,
+      default: false,
+    },
+    festivalTags: {
       type: [String],
-      required: true,
-    },
-    colors: {
-      type: [String],
-      required: true,
-    },
-    collections: {
-      type: String,
-      required: true,
-    },
-    material: {
-      type: String,
-    },
-    gender: {
-      type: String,
-      enum: ["Men", "Women", "Unisex"],
     },
     images: [
       {
@@ -105,7 +109,19 @@ const productSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
 );
+
+productSchema.pre("save", function () {
+    if (this.category && this.category.toLocaleLowerCase() !== "all") {
+      this.category = this.category.trim().toLowerCase();
+    }
+});
+
+productSchema.virtual("price").get(function () {
+  return this.basePrice;
+});
 
 module.exports = mongoose.model("Product", productSchema)

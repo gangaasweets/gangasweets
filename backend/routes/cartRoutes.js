@@ -19,10 +19,16 @@ const getCart = async (userId, guestId) => {
 // @desc Add a product to the cart for a guest or logged in user
 // @access Public
 router.post("/", async (req, res) => {
-  const { productId, quantity, size, color, guestId, userId } = req.body;
+  const { productId, quantity, selectedWeight, guestId, userId } = req.body;
   try {
     const product = await Product.findById(productId);
     if (!product) return res.status(404).json({ message: "Product not found" });
+
+    let itemPrice = product.basePrice;
+    if (product.productType === "standard") {
+      if (selectedWeight === "250g") itemPrice = product.basePrice / 4;
+      else if (selectedWeight === "500g") itemPrice = product.basePrice / 2;
+    }
 
     // Determine if the user is logged in or guest
     let cart = await getCart(userId, guestId);
@@ -32,8 +38,7 @@ router.post("/", async (req, res) => {
       const productIndex = cart.products.findIndex(
         (p) =>
           p.productId.toString() === productId &&
-          p.size === size &&
-          p.color === color,
+          p.selectedWeight === selectedWeight,
       );
 
       if (productIndex > -1) {
@@ -44,10 +49,10 @@ router.post("/", async (req, res) => {
         cart.products.push({
           productId,
           name: product.name,
-          image: product.images[0].url,
-          price: product.price,
-          size,
-          color,
+          image: product.images[0]?.url || "",
+          price: itemPrice,
+          selectedWeight,
+          productType: product.productType,
           quantity,
         });
       }
@@ -68,14 +73,14 @@ router.post("/", async (req, res) => {
           {
             productId,
             name: product.name,
-            image: product.images[0].url,
-            price: product.price,
-            size,
-            color,
+            image: product.images[0]?.url || "",
+            price: itemPrice,
+            selectedWeight,
+            productType: product.productType,
             quantity,
           },
         ],
-        totalPrice: product.price * quantity,
+        totalPrice: itemPrice * quantity,
       });
       return res.status(201).json(newCart);
     }
@@ -89,7 +94,7 @@ router.post("/", async (req, res) => {
 // @desc Update product quantity in the cart for a guest or logged-in user
 // @acess Public
 router.put("/", async (req, res) => {
-  const { productId, quantity, size, color, guestId, userId } = req.body;
+  const { productId, quantity, selectedWeight, guestId, userId } = req.body;
   try {
     let cart = await getCart(userId, guestId);
     if (!cart) return res.status(404).json({ message: "Cart not found" });
@@ -97,8 +102,7 @@ router.put("/", async (req, res) => {
     const productIndex = cart.products.findIndex(
       (p) =>
         p.productId.toString() === productId &&
-        p.size === size &&
-        p.color === color,
+        p.selectedWeight === selectedWeight,
     );
 
     if (productIndex > -1) {
@@ -128,7 +132,7 @@ router.put("/", async (req, res) => {
 // @desc Remove a product from the cart
 // @access Public
 router.delete("/", async (req, res) => {
-  const { productId, size, color, guestId, userId } = req.body;
+  const { productId, selectedWeight, guestId, userId } = req.body;
   try {
     let cart = await getCart(userId, guestId);
 
@@ -137,8 +141,7 @@ router.delete("/", async (req, res) => {
     const productIndex = cart.products.findIndex(
       (p) =>
         p.productId.toString() === productId &&
-        p.size === size &&
-        p.color === color,
+        p.selectedWeight === selectedWeight,
     );
 
     if (productIndex > -1) {
@@ -200,8 +203,7 @@ router.post("/merge", protect, async (req, res) => {
           const productIndex = userCart.products.findIndex(
             (item) =>
               item.productId.toString() === guestItem.productId.toString() &&
-              item.size === guestItem.size &&
-              item.color === guestItem.color,
+              item.selectedWeight === guestItem.selectedWeight,
           );
 
           if (productIndex > -1) {

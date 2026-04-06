@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import MetaHTML from "../components/Common/MetaHTML";
 import SchemaMarkup from "../components/Common/SchemaMarkup";
 import { FiArrowLeft } from "react-icons/fi";
+import { SingleBlogSkeleton } from "../components/Common/Skeleton";
 // Ensure quill styles are imported for proper rendering of the HTML content
 import "react-quill/dist/quill.snow.css";
 
@@ -37,15 +38,15 @@ const SingleBlogPage = () => {
     dateModified: new Date(singleBlog.updatedAt).toISOString(),
     author: [{
         "@type": "Person",
-        name: singleBlog.author?.name || "Rabbit Team",
+        name: singleBlog.author?.name || "Ganga Sweets Team",
     }],
     description: singleBlog.excerpt,
   } : null;
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#ea2e0e]"></div>
+      <div className="bg-white text-gray-900 min-h-screen py-10 lg:py-16">
+        <SingleBlogSkeleton />
       </div>
     );
   }
@@ -53,8 +54,8 @@ const SingleBlogPage = () => {
   if (error || !singleBlog) {
     return (
       <div className="text-center py-20 min-h-[60vh] flex flex-col justify-center items-center">
-        <h2 className="text-2xl mb-4">Blog Post Not Found</h2>
-        <Link to="/blog" className="text-[#ea2e0e] hover:underline">
+        <h2 className="text-2xl mb-4 font-['Cinzel'] tracking-widest">Blog Post Not Found</h2>
+        <Link to="/blog" className="text-[#D4AF37] hover:underline font-bold uppercase tracking-widest text-xs">
           Return to All Blogs
         </Link>
       </div>
@@ -87,23 +88,23 @@ const SingleBlogPage = () => {
           </Link>
         </div>
 
-        <header className="mb-10 text-center">
-          <span className="text-sm text-[#ea2e0e] font-medium tracking-widest uppercase mb-4 block">
+        <header className="mb-10 text-center border-b border-gray-100 pb-10">
+          <span className="text-sm text-[#D4AF37] font-bold tracking-[0.3em] uppercase mb-4 block">
             {new Date(singleBlog.createdAt).toLocaleDateString("en-US", {
               month: "long",
               day: "numeric",
               year: "numeric",
             })}
           </span>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-['Cinzel'] font-bold tracking-tighter mb-6 leading-tight text-gray-900">
             {singleBlog.title}
           </h1>
-          <p className="text-gray-500 text-sm italic">
-            By {singleBlog.author?.name || "Rabbit Team"}
+          <p className="text-gray-400 text-xs uppercase tracking-widest font-bold">
+            By {singleBlog.author?.name || "Ganga Sweets Team"}
           </p>
         </header>
 
-        <div className="mb-12 rounded-xl overflow-hidden shadow-lg border border-gray-100 relative h-[300px] md:h-[500px] w-full">
+        <div className="mb-16 rounded-3xl overflow-hidden shadow-2xl border border-gray-100 relative h-[400px] md:h-[600px] w-full">
           <img
             src={optimizeCloudinaryUrl(singleBlog.image?.url)}
             alt={singleBlog.image?.altText || singleBlog.title}
@@ -113,7 +114,7 @@ const SingleBlogPage = () => {
         </div>
 
         <div 
-            className="prose prose-lg max-w-none prose-img:rounded-xl prose-img:shadow-md prose-a:text-[#ea2e0e] prose-p:text-gray-600 prose-headings:font-medium text-[15px] leading-loose ql-editor"
+            className="prose prose-lg max-w-none prose-img:rounded-2xl prose-img:shadow-xl prose-a:text-[#D4AF37] prose-p:text-gray-600 prose-headings:font-['Cinzel'] prose-headings:font-bold prose-headings:tracking-widest text-[16px] leading-relaxed ql-editor"
             dangerouslySetInnerHTML={{ __html: singleBlog.content }} 
         />
         

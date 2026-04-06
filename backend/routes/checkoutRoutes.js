@@ -18,7 +18,7 @@ const razorpay = new Razorpay({
 // @desc Create a new checkout session
 // @access Private
 router.post("/", protect, async (req, res) => {
-  const { checkoutItems, shippingAddress, paymentMethod, totalPrice } = req.body;
+  const { checkoutItems, shippingAddress, deliveryDate, deliveryTimeSlot, paymentMethod, totalPrice } = req.body;
 
   if (!checkoutItems || checkoutItems.length === 0) {
     return res.status(400).json({
@@ -32,6 +32,8 @@ router.post("/", protect, async (req, res) => {
       user: req.user._id,
       checkoutItems: checkoutItems,
       shippingAddress,
+      deliveryDate,
+      deliveryTimeSlot,
       paymentMethod,
       totalPrice,
       paymentStatus: "Pending",
@@ -118,18 +120,20 @@ router.post("/:id/finalize", protect, async (req, res) => {
       return res.status(404).json({ message: "Checkout not found" });
     }
 
-    if (checkout.isPaid && !checkout.isFinalized) {
+    if ((checkout.isPaid || checkout.paymentMethod === "COD" || checkout.paymentMethod === "Demo Payment") && !checkout.isFinalized) {
       // Create final order based on checkout details
       const finalOrder = await Order.create({
         user: checkout.user,
         orderItems: checkout.checkoutItems,
         shippingAddress: checkout.shippingAddress,
+        deliveryDate: checkout.deliveryDate,
+        deliveryTimeSlot: checkout.deliveryTimeSlot,
         paymentMethod: checkout.paymentMethod,
         totalPrice: checkout.totalPrice,
-        isPaid: true,
+        isPaid: checkout.isPaid,
         paidAt: checkout.paidAt,
         isDelivered: false,
-        paymentStatus: "paid",
+        paymentStatus: checkout.paymentMethod === "COD" ? "pending" : "paid",
         paymentDetails: checkout.paymentDetails,
       });
 

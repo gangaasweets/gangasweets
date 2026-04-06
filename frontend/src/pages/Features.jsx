@@ -9,15 +9,15 @@ const FAQItem = ({ question, answer, isOpen, toggleOpen }) => {
                 className="w-full py-5 flex justify-between items-center text-left focus:outline-none px-1 group"
                 onClick={toggleOpen}
             >
-                <span className="text-[14px] font-medium text-gray-900 group-hover:text-[#ea2e0e] transition-colors">
+                <span className="text-[15px] font-bold text-gray-900 group-hover:text-[#D4AF37] transition-colors font-['Cinzel'] tracking-wide">
                     {question}
                 </span>
 
-                <span className="ml-4 shrink-0 text-[#ea2e0e]">
+                <span className="ml-4 shrink-0 text-[#D4AF37]">
                     {isOpen ? (
-                        <FiChevronUp className="text-[18px]" />
+                        <FiChevronUp className="text-[20px]" />
                     ) : (
-                        <FiChevronDown className="text-[18px]" />
+                        <FiChevronDown className="text-[20px]" />
                     )}
                 </span>
             </button>
@@ -105,23 +105,23 @@ const Faqs = () => {
                     viewport={{ once: true }}
                     variants={sectionVariants}
                 >
-                    <h1 className="text-[28px] font-medium mb-3 text-[#ea2e0e]">
+                    <h1 className="text-3xl md:text-4xl font-['Cinzel'] font-bold mb-3 text-[#D4AF37] uppercase tracking-wider">
                         Frequently Asked Questions
                     </h1>
-                    <p className="text-[14px] text-gray-600 max-w-md mx-auto leading-relaxed">
+                    <p className="text-sm text-gray-400 font-light max-w-md mx-auto leading-relaxed">
                         Find quick answers about orders, shipping, returns, and more.
                     </p>
                 </motion.div>
 
                 {/* FAQ BOX */}
                 <motion.div
-                    className="bg-white rounded-xl p-6 border border-gray-300"
+                    className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100"
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true }}
                     variants={sectionVariants}
                 >
-                    <div className="divide-y divide-gray-300">
+                    <div className="divide-y divide-gray-100">
                         {faqs.map((faq, index) => (
                             <FAQItem
                                 key={index}
@@ -138,18 +138,18 @@ const Faqs = () => {
 
                 {/* CTA */}
                 <motion.div
-                    className="mt-16 text-center"
+                    className="mt-20 text-center"
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true }}
                     variants={sectionVariants}
                 >
-                    <p className="text-[13px] text-gray-600 mb-3">
+                    <p className="text-[13px] text-gray-400 font-bold uppercase tracking-widest mb-4">
                         Still need help?
                     </p>
                     <a
                         href="/contact"
-                        className="inline-block bg-[#ea2e0e] text-white text-[13px] px-8 py-3 rounded-md hover:bg-red-700 transition"
+                        className="inline-block bg-[#D4AF37] text-white text-[12px] font-bold uppercase tracking-[0.2em] px-10 py-4 rounded-full hover:bg-[#B8962E] transition shadow-lg shadow-[#D4AF37]/20"
                     >
                         Contact Support
                     </a>

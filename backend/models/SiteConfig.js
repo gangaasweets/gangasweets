@@ -6,13 +6,11 @@ const siteConfigSchema = new mongoose.Schema(
       url: { type: String },
       altText: { type: String, default: "Hero Image" },
     },
-    womensCollectionImage: {
-      url: { type: String },
-      altText: { type: String, default: "Women's Collection" },
-    },
-    mensCollectionImage: {
-      url: { type: String },
-      altText: { type: String, default: "Men's Collection" },
+    festivalMode: {
+      isActive: { type: Boolean, default: false },
+      name: { type: String },
+      bannerImage: { type: String },
+      themeColor: { type: String },
     },
     aboutUsHeroImage: {
       url: { type: String },

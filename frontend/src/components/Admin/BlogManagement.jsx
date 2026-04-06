@@ -38,7 +38,7 @@ const BlogManagement = () => {
         </h2>
         <Link
           to="/admin/blogs/new"
-          className="bg-[#ea2e0e] text-white px-4 py-2 rounded flex items-center hover:bg-red-700 transition"
+          className="bg-[#D4AF37] text-white px-6 py-2.5 rounded-full flex items-center hover:bg-[#B8962E] transition shadow-lg shadow-[#D4AF37]/20 font-bold text-xs uppercase tracking-widest"
         >
           <FiPlus className="mr-2" />
           Create Blog

@@ -5,31 +5,29 @@ import axios from "axios";
 export const fetchProductsByFilters = createAsyncThunk(
   "products/fetchByFilters",
   async ({
+    isSugarFree,
+    category,
     collection,
-    size,
-    color,
-    gender,
+    subCategory,
+    productType,
     minPrice,
     maxPrice,
     sortBy,
     search,
-    category,
-    material,
-    brand,
     limit,
   }) => {
     const query = new URLSearchParams();
-    if (collection) query.append("collection", collection);
-    if (size) query.append("size", size);
-    if (color) query.append("color", color);
-    if (gender) query.append("gender", gender);
-    if (minPrice) query.append("minPrice", minPrice);
-    if (maxPrice) query.append("maxPrice", maxPrice);
+    if (category && category !== "all") query.append("category", category);
+    if (collection && collection !== "all") query.append("collection", collection);
+    if (subCategory) query.append("subCategory", subCategory);
+    if (productType) query.append("productType", productType);
+    if (isSugarFree !== undefined && isSugarFree !== "") query.append("isSugarFree", isSugarFree);
+    
+    if (minPrice !== undefined && minPrice !== "") query.append("minPrice", minPrice);
+    if (maxPrice !== undefined && maxPrice !== "") query.append("maxPrice", maxPrice);
+    
     if (sortBy) query.append("sortBy", sortBy);
     if (search) query.append("search", search);
-    if (category) query.append("category", category);
-    if (material) query.append("material", material);
-    if (brand) query.append("brand", brand);
     if (limit) query.append("limit", limit);
 
     const response = await axios.get(
@@ -67,6 +65,50 @@ export const updateProduct = createAsyncThunk(
   },
 );
 
+//Async thunk to fetch unique categories
+export const fetchCategories = createAsyncThunk(
+  "products/fetchCategories",
+  async () => {
+    const response = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/api/categories`,
+    );
+    return response.data;
+  },
+);
+
+// Async thunk to create a category
+export const createCategory = createAsyncThunk(
+  "products/createCategory",
+  async (categoryData) => {
+    const response = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/api/categories`,
+      categoryData,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+      },
+    );
+    return response.data;
+  },
+);
+
+// Async thunk to delete a category
+export const deleteCategory = createAsyncThunk(
+  "products/deleteCategory",
+  async (id) => {
+    await axios.delete(
+      `${import.meta.env.VITE_BACKEND_URL}/api/categories/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+      },
+    );
+    return id;
+  },
+);
+
 // Async Thunk to fetch similar products
 export const fetchSimilarProducts = createAsyncThunk(
   "products/fetchSimilarProducts",
@@ -82,22 +124,20 @@ const productsSlice = createSlice({
   name: "products",
   initialState: {
     products: [],
+    categories: [],
     selectedProduct: null, //Store the details of the single project
     similarProducts: [],
     loading: false,
     error: null,
     filters: {
       category: "",
-      size: "",
-      color: "",
-      gender: "",
-      brand: "",
+      subCategory: "",
+      productType: "",
+      isSugarFree: "",
       minPrice: "",
       maxPrice: "",
       sortBy: "",
       search: "",
-      material: "",
-      collection: "",
     },
   },
   reducers: {
@@ -107,16 +147,13 @@ const productsSlice = createSlice({
     clearFilters: (state) => {
       state.filters = {
         category: "",
-        size: "",
-        color: "",
-        gender: "",
-        brand: "",
+        subCategory: "",
+        productType: "",
+        isSugarFree: "",
         minPrice: "",
         maxPrice: "",
         sortBy: "",
         search: "",
-        material: "",
-        collection: "",
       };
     },
   },
@@ -181,6 +218,15 @@ const productsSlice = createSlice({
       .addCase(fetchSimilarProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(fetchCategories.fulfilled, (state, action) => {
+        state.categories = action.payload;
+      })
+      .addCase(createCategory.fulfilled, (state, action) => {
+        state.categories.push(action.payload);
+      })
+      .addCase(deleteCategory.fulfilled, (state, action) => {
+        state.categories = state.categories.filter((cat) => cat._id !== action.payload);
       });
   },
 });

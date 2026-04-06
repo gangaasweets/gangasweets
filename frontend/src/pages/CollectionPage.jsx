@@ -21,7 +21,7 @@ const CollectionPage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
-    const collectionTitle = collection === "all" ? "All Collections" : `${capitalize(collection)} Collection`;
+    const collectionTitle = collection === "all" ? "Our Entire Menu" : `${capitalize(collection)} Selection`;
 
     useEffect(() => {
         dispatch(fetchProductsByFilters({ collection, ...queryParams }))
@@ -110,9 +110,9 @@ const CollectionPage = () => {
         >
             <MetaHTML 
                 title={collectionTitle}
-                description={`Browse our premium ${collectionTitle.toLowerCase()}. Shop the latest trends in fashion at Rabbit E-commerce with secure payments and fast delivery.`}
+                description={`Browse our premium ${collectionTitle.toLowerCase()}. Shop authentic pure ghee mithai and namkeen at Ganga Sweets with fast delivery.`}
             />
-            <h1 className="text-2xl uppercase mb-4">{collectionTitle}</h1>
+            <h1 className="premium-separator mt-8">{collectionTitle}</h1>
             <SortOptions />
             <ProductGrid products={products} loading={loading} error={error} />
         </motion.div>

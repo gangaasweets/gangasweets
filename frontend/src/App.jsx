@@ -19,6 +19,7 @@ import EditProductPage from './components/Admin/EditProductPage';
 import OrderManagement from './components/Admin/OrderManagement';
 import BlogManagement from './components/Admin/BlogManagement';
 import EditBlogPage from './components/Admin/EditBlogPage';
+import CategoryManagement from './components/Admin/CategoryManagement';
 
 import { Provider } from "react-redux";
 import store from "./redux/store";
@@ -56,6 +57,9 @@ const App = () => {
             <Route path="contact" element={<Contact />} />
             <Route path="about" element={<About />} />
             <Route path="faqs" element={<Faqs />} />
+            <Route path="blogs" element={<BlogListingPage />} />
+            <Route path="blogs/:slug" element={<SingleBlogPage />} />
+            {/* Alias for backward compatibility */}
             <Route path="blog" element={<BlogListingPage />} />
             <Route path="blog/:slug" element={<SingleBlogPage />} />
             <Route path="features" element={<Features />} />
@@ -75,6 +79,7 @@ const App = () => {
             <Route path="products/new" element={<EditProductPage />} />
             <Route path="products/:id/edit" element={<EditProductPage />} />
             <Route path="orders" element={<OrderManagement />} />
+            <Route path="categories" element={<CategoryManagement />} />
             <Route path="blogs" element={<BlogManagement />} />
             <Route path="blogs/new" element={<EditBlogPage />} />
             <Route path="blogs/:id/edit" element={<EditBlogPage />} />

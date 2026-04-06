@@ -20,8 +20,7 @@ const ProductDetails = ({ productId }) => {
     )
     const { user, guestId } = useSelector((state) => state.auth)
     const [mainImage, setMainImage] = useState("");
-    const [selectedSize, setSelectedSize] = useState("");
-    const [selectedColor, setSelectedColor] = useState("");
+    const [selectedWeight, setSelectedWeight] = useState("1kg"); // Default to 1kg
     const [quantity, setQuantity] = useState(1);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
@@ -38,6 +37,11 @@ const ProductDetails = ({ productId }) => {
         if (selectedProduct?.images?.length > 0) {
             setMainImage(selectedProduct.images[0].url);
         }
+        if (selectedProduct?.productType === "standard") {
+            setSelectedWeight("1kg");
+        } else {
+            setSelectedWeight("one unit");
+        }
     }, [selectedProduct]);
 
     const handleQuantityChange = (action) => {
@@ -46,8 +50,8 @@ const ProductDetails = ({ productId }) => {
     };
 
     const handleAddToCart = () => {
-        if (!selectedSize || !selectedColor) {
-            toast.error("Please select size and color before adding to cart.", {
+        if (selectedProduct?.productType === "standard" && !selectedWeight) {
+            toast.error("Please select weight before adding to cart.", {
                 duration: 1000,
             });
             return;
@@ -59,20 +63,29 @@ const ProductDetails = ({ productId }) => {
             addToCart({
                 productId: productFetchId,
                 quantity,
-                size: selectedSize,
-                color: selectedColor,
+                selectedWeight: selectedWeight,
                 guestId,
                 userId: user?._id,
             })
         )
             .then(() => {
-                toast.success("Product added to cart!", {
+                toast.success("Added to cart!", {
                     duration: 1000,
                 })
             })
             .finally(() => {
                 setIsButtonDisabled(false);
             })
+    };
+
+    const getDisplayPrice = () => {
+        if (!selectedProduct) return 0;
+        let price = selectedProduct.basePrice || selectedProduct.price;
+        if (selectedProduct.productType === "standard") {
+            if (selectedWeight === "500g") return (price / 2).toFixed(2);
+            if (selectedWeight === "250g") return (price / 4).toFixed(2);
+        }
+        return price;
     };
 
     // Helper to optimize Cloudinary URLs
@@ -90,13 +103,13 @@ const ProductDetails = ({ productId }) => {
         description: selectedProduct.description,
         brand: {
             "@type": "Brand",
-            name: selectedProduct.brand || "Rabbit"
+            name: selectedProduct.brand || "Ganga Sweets"
         },
         offers: {
             "@type": "Offer",
             url: window.location.href,
-            priceCurrency: "USD",
-            price: selectedProduct.price,
+            priceCurrency: "INR",
+            price: selectedProduct.basePrice || selectedProduct.price,
             availability: selectedProduct.countInStock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
         }
     } : null;
@@ -172,15 +185,27 @@ const ProductDetails = ({ productId }) => {
                                         {selectedProduct.name}
                                     </h1>
 
-                                    <div className="flex items-center space-x-2 text-[18px]">
-                                        {selectedProduct.originalPrice && (
-                                            <span className="text-gray-500 line-through font-normal">
-                                                ${selectedProduct.originalPrice}
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        {selectedProduct.isBestSeller && (
+                                            <span className="bg-orange-100 text-orange-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Best Seller</span>
+                                        )}
+                                        {selectedProduct.isPremium && (
+                                            <span className="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Premium</span>
+                                        )}
+                                        {selectedProduct.isSugarFree && (
+                                            <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Sugar Free</span>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center space-x-2 text-[24px]">
+                                        <span className="text-[#D4AF37] font-semibold">
+                                            ₹{getDisplayPrice()}
+                                        </span>
+                                        {selectedProduct.productType === "standard" && (
+                                            <span className="text-[12px] text-gray-400 font-normal">
+                                                (for {selectedWeight})
                                             </span>
                                         )}
-                                        <span className="text-gray-900 font-medium">
-                                            ${selectedProduct.price}
-                                        </span>
                                     </div>
                                 </div>
 
@@ -189,36 +214,22 @@ const ProductDetails = ({ productId }) => {
                                 </p>
 
                                 <div className="space-y-4">
-                                    <div>
-                                        <p className="text-[13px] font-medium text-gray-900">Color:</p>
-                                        <div className="flex gap-2 mt-2">
-                                            {selectedProduct.colors?.map((color) => (
-                                                <button
-                                                    key={color}
-                                                    onClick={() => setSelectedColor(color)}
-                                                    className={`w-8 h-8 rounded-full border cursor-pointer ${selectedColor === color ? "border-2 border-black" : "border-[#E5E5E5]"}`}
-                                                    style={{
-                                                        backgroundColor: color.toLocaleLowerCase(),
-                                                        filter: "brightness(0.9)"
-                                                    }}></button>
-                                            ))}
+                                    {selectedProduct.productType === "standard" && (
+                                        <div>
+                                            <p className="text-[13px] font-medium text-gray-900">Select Weight:</p>
+                                            <div className="flex gap-3 mt-2">
+                                                {["250g", "500g", "1kg"].map((weight) => (
+                                                    <button
+                                                        key={weight}
+                                                        onClick={() => setSelectedWeight(weight)}
+                                                        className={`flex-1 py-3 border border-[#E5E5E5] rounded-md text-[13px] font-medium transition-all cursor-pointer ${selectedWeight === weight ? "border-[#D4AF37] bg-[#FFF8E7] text-[#D4AF37]" : "hover:bg-gray-50 text-gray-600"}`}
+                                                    >
+                                                        {weight}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-[13px] font-medium text-gray-900">Size:</p>
-                                        <div className="flex gap-2 mt-2">
-                                            {selectedProduct.sizes?.map((size) => (
-                                                <button
-                                                    key={size}
-                                                    onClick={() => setSelectedSize(size)}
-                                                    className={`px-4 py-2 border border-[#E5E5E5] rounded text-[13px] cursor-pointer ${selectedSize === size ? "bg-black text-white" : "hover:bg-gray-50"}`}
-                                                >
-                                                    {size}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
+                                    )}
 
                                     <div>
                                         <p className="text-[13px] font-medium text-gray-900">Quantity:</p>
@@ -238,7 +249,7 @@ const ProductDetails = ({ productId }) => {
                                     <button
                                         onClick={handleAddToCart}
                                         disabled={isButtonDisabled}
-                                        className={`bg-[#000] text-white py-3 px-5 rounded w-full text-[13px] font-medium transition-all ${isButtonDisabled ? "cursor-not-allowed opacity-50" : "hover:opacity-85 cursor-pointer"}`}>
+                                        className={`bg-[#D4AF37] text-white py-4 px-5 rounded-md w-full text-[14px] font-bold tracking-wide shadow-md transition-all ${isButtonDisabled ? "cursor-not-allowed opacity-50" : "hover:bg-[#B8962E] cursor-pointer"}`}>
                                         {isButtonDisabled ? "ADDING TO CART..." : "ADD TO CART"}
                                     </button>
                                 </div>
@@ -246,16 +257,19 @@ const ProductDetails = ({ productId }) => {
                                 <div className="pt-6 border-t border-[#E5E5E5] flex flex-col space-y-4">
                                     <h3 className="text-[13px] font-medium text-gray-900">Characteristics:</h3>
                                     <div className="space-y-2">
-                                        {selectedProduct.brand && (
+                                        {selectedProduct.category && (
                                             <p className="text-[13px] text-gray-600">
-                                                <span className="font-medium text-gray-900">Brand:</span> {selectedProduct.brand}
+                                                <span className="font-medium text-gray-900">Category:</span> {selectedProduct.category}
                                             </p>
                                         )}
-                                        {selectedProduct.material && (
+                                        {selectedProduct.subCategory && (
                                             <p className="text-[13px] text-gray-600">
-                                                <span className="font-medium text-gray-900">Material:</span> {selectedProduct.material}
+                                                <span className="font-medium text-gray-900">Type:</span> {selectedProduct.subCategory}
                                             </p>
                                         )}
+                                        <p className="text-[13px] text-gray-600">
+                                            <span className="font-medium text-gray-900">Sugar Free:</span> {selectedProduct.isSugarFree ? "Yes" : "No"}
+                                        </p>
                                     </div>
                                 </div>
                             </div>

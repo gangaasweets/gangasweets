@@ -46,14 +46,14 @@ const ProductGrid = ({ products, loading, error }) => {
                             <div className="w-full h-48 sm:h-96 mb-2 sm:mb-4 overflow-hidden rounded-lg">
                                 <img
                                     src={optimizeCloudinaryUrl(product.images?.[0]?.url)}
-                                    alt={product.images?.[0]?.altText || product.name || "Rabbit E-commerce Product"}
+                                    alt={product.images?.[0]?.altText || product.name || "Ganga Sweets Product"}
                                     loading="lazy"
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
                             </div>
                             <h3 className="text-[14px] font-medium mb-1 group-hover:text-gray-600 transition-colors uppercase">{product.name}</h3>
                             <p className="text-gray-900 font-medium text-[14px] tracking-tight">
-                                ${product.price}
+                                ₹{product.price}
                             </p>
                         </div>
                     </Link>

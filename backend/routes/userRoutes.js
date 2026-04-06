@@ -48,7 +48,7 @@ router.post("/register", async (req, res) => {
     // 3. Send OTP Email
     sendEmail({
       to: email,
-      subject: "Verify your email - Rabbit E-commerce",
+      subject: "Verify your email - Ganga Sweets",
       text: `Your OTP is ${otp}. It expires in 5 minutes.`,
       html: `<h1>Verify your email</h1><p>Your OTP is <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
     });
@@ -146,7 +146,7 @@ router.post("/resend-otp", async (req, res) => {
 
     sendEmail({
       to: email,
-      subject: "New OTP - Rabbit E-commerce",
+      subject: "New OTP - Ganga Sweets",
       text: `Your new OTP is ${otp}. It expires in 5 minutes.`,
       html: `<h1>Verify your email</h1><p>Your new OTP is <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
     });
@@ -179,7 +179,7 @@ router.post("/forgot-password", async (req, res) => {
 
     sendEmail({
       to: email,
-      subject: "Password Reset OTP - Rabbit E-commerce",
+      subject: "Password Reset OTP - Ganga Sweets",
       text: `Your password reset OTP is ${otp}. It expires in 2 minutes.`,
       html: `<h1>Reset Password</h1>
              <p>Your password reset OTP is: <strong>${otp}</strong></p>
@@ -242,7 +242,7 @@ router.post("/resend-reset-otp", async (req, res) => {
 
     sendEmail({
       to: email,
-      subject: "New Password Reset OTP - Rabbit E-commerce",
+      subject: "New Password Reset OTP - Ganga Sweets",
       text: `Your new password reset OTP is ${otp}. It expires in 2 minutes.`,
       html: `<h1>Reset Password</h1><p>Your new OTP is: <strong>${otp}</strong></p><p>It expires in 2 minutes.</p>`,
     });
