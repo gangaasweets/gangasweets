@@ -57,19 +57,9 @@ app.use("/api/blogs", blogRoutes); // Using /api/blogs for public access as well
 
 
 // Serve static files in production
-if (process.env.NODE_ENV === "production") {
-  // Serve static files from the frontend/dist directory
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  // For any other request, serve the index.html from the dist folder (SPA support)
-  app.use((req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  });
-} else {
-  app.get("/", (req, res) => {
-    res.send("Welcome to Ganga Sweets API (Development Mode)!");
-  });
-}
+app.get("/", (req, res) => {
+  res.send("Ganga Sweets API is running 🚀");
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
