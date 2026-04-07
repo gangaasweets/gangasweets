@@ -1,12 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import hamper1 from "../../assets/hamper 1.webp";
+import hamper2 from "../../assets/hamper 2.webp";
+import hamper3 from "../../assets/hamper 3.webp";
+import hamper4 from "../../assets/hamper 4.webp";
+
+
 
 const HampersSection = () => {
     const hampers = [
-        { title: "Biscuits & Namkeen", image: "https://picsum.photos/500/625?random=21", path: "/collections/all?category=Namkeen" },
-        { title: "Chips", image: "https://picsum.photos/500/625?random=22", path: "/collections/all?category=Snacks" },
-        { title: "Cold Drinks", image: "https://picsum.photos/500/625?random=23", path: "/collections/all?category=Beverages" },
-        { title: "Chocolates", image: "https://picsum.photos/500/625?random=24", path: "/collections/all?category=Gifts" },
+        { title: "Biscuits & Namkeen", image: hamper1, path: "/collections/all?category=Namkeen" },
+        { title: "Chips", image: hamper2, path: "/collections/all?category=Snacks" },
+        { title: "Dry Fruits", image: hamper3, path: "/collections/all?category=Dry Fruits" },
+        { title: "Chocolates", image: hamper4, path: "/collections/all?category=Chocolates" },
     ];
 
     const Separator = () => (
@@ -31,8 +37,8 @@ const HampersSection = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
                     {hampers.map((item, index) => (
-                        <motion.div 
-                            key={index} 
+                        <motion.div
+                            key={index}
                             className="group relative"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -43,9 +49,9 @@ const HampersSection = () => {
                             <div className="relative overflow-hidden bg-white shadow-sm border border-gray-100 rounded-xl transition-all duration-300 group-hover:shadow-2xl group-hover:border-[#b08d57]/30">
                                 {/* Image */}
                                 <div className="aspect-[4/5] overflow-hidden">
-                                    <img 
-                                        src={item.image} 
-                                        alt={item.title} 
+                                    <img
+                                        src={item.image}
+                                        alt={item.title}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     />
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
