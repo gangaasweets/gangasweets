@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fetchAdminProducts, deleteProduct } from "../../redux/slices/adminProductSlice";
+import { TableSkeleton } from "../Common/Skeleton";
 
 const ProductManagement = () => {
   const dispatch = useDispatch();
@@ -20,8 +21,16 @@ const ProductManagement = () => {
     }
   }
 
-  if (loading) return <p>Loading ...</p>
   if (error) return <p className="text-red-500">{error}</p>
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <h2 className="text-[28px] font-medium mb-6">Product Management</h2>
+        <TableSkeleton rows={8} cols={5} />
+      </div>
+    );
+  }
 
   // Animation variants
   const pageVariants = {

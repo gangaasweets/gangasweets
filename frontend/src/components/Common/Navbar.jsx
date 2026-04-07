@@ -40,11 +40,11 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="container mx-auto flex items-center justify-between py-4 px-6 relative z-50">
+      <nav className="container mx-auto flex items-center justify-between py-4 px-4 md:px-6 relative z-50">
         {/* Left - Logo */}
         <div className="flex-shrink-0">
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="Ganga Sweets" className="h-12 md:h-8 w-auto object-contain" />
+            <img src={logo} alt="Ganga Sweets" className="h-8 md:h-10 lg:h-12 w-auto object-contain" />
           </Link>
         </div>
 

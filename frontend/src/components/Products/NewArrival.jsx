@@ -91,7 +91,7 @@ const NewArrival = () => {
 
   return (
     <section className="py-16 px-4 lg:px-0 mx-4 md:mx-12">
-      <div className="container mx-auto text-center mb-10 relative">
+      <div className="container mx-auto text-center mb-10 pb-12 sm:pb-0 relative">
         <motion.h2
           className="premium-separator"
           initial={{ opacity: 0, y: 20 }}
