@@ -21,12 +21,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 
 const app = express();
 app.use(express.json());
-app.use(cors(
-  // {
-  //   origin: ["https://rabbit-clothings.vercel.app", "http://localhost:5173"],
-  //   credentials: true,
-  // }
-));
+app.use(cors());
 
 
 const PORT = process.env.PORT;
